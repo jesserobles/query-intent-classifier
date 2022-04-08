@@ -43,3 +43,6 @@ trainer = Trainer(
     eval_dataset=tokenized_datasets['test'],
     compute_metrics=compute_metrics,
 )
+trainer.train()
+trainer.evaluate()
+trainer.save_model('atis-intent.model')

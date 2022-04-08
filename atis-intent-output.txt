@@ -1,0 +1,49 @@
+100%|████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  4.00ba/s]
+100%|████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  3.59ba/s]
+Some weights of the model checkpoint at bert-base-cased were not used when initializing BertForSequenceClassification: ['cls.predictions.transform.LayerNorm.bias', 'cls.predictions.transform.dense.weight', 'cls.predictions.transform.dense.bias', 'cls.seq_relationship.weight', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.decoder.weight', 'cls.predictions.bias', 'cls.seq_relationship.bias']
+- This IS expected if you are initializing BertForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-base-cased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+>>> trainer.train()
+The following columns in the training set  don't have a corresponding argument in `BertForSequenceClassification.forward` and have been ignored: text. If text are not expected by `BertForSequenceClassification.forward`,  you can safely ignore this message.
+C:\Users\Jesse\anaconda3\envs\hug\lib\site-packages\transformers\optimization.py:306: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+***** Running training *****
+  Num examples = 4478
+  Num Epochs = 3
+  Instantaneous batch size per device = 8
+  Total train batch size (w. parallel, distributed & accumulation) = 8
+  Gradient Accumulation steps = 1
+  Total optimization steps = 1680
+{'loss': 0.4303, 'learning_rate': 3.511904761904762e-05, 'epoch': 0.89}
+ 30%|██████████████████████▎                                                    | 500/1680 [2:36:40<6:11:58, 18.91s/it]Saving model checkpoint to test_trainer\checkpoint-500
+Configuration saved in test_trainer\checkpoint-500\config.json
+Model weights saved in test_trainer\checkpoint-500\pytorch_model.bin
+{'loss': 0.1265, 'learning_rate': 2.023809523809524e-05, 'epoch': 1.79}
+ 60%|████████████████████████████████████████████                              | 1000/1680 [5:09:39<2:56:40, 15.59s/it]Saving model checkpoint to test_trainer\checkpoint-1000
+Configuration saved in test_trainer\checkpoint-1000\config.json
+Model weights saved in test_trainer\checkpoint-1000\pytorch_model.bin
+{'loss': 0.0536, 'learning_rate': 5.357142857142857e-06, 'epoch': 2.68}
+ 89%|███████████████████████████████████████████████████████████████████▊        | 1500/1680 [7:20:50<46:51, 15.62s/it]Saving model checkpoint to test_trainer\checkpoint-1500
+Configuration saved in test_trainer\checkpoint-1500\config.json
+Model weights saved in test_trainer\checkpoint-1500\pytorch_model.bin
+100%|████████████████████████████████████████████████████████████████████████████| 1680/1680 [8:07:46<00:00, 14.47s/it]
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+{'train_runtime': 29266.154, 'train_samples_per_second': 0.459, 'train_steps_per_second': 0.057, 'train_loss': 0.18732884441103254, 'epoch': 3.0}
+100%|████████████████████████████████████████████████████████████████████████████| 1680/1680 [8:07:46<00:00, 17.42s/it]
+TrainOutput(global_step=1680, training_loss=0.18732884441103254, metrics={'train_runtime': 29266.154, 'train_samples_per_second': 0.459, 'train_steps_per_second': 0.057, 'train_loss': 0.18732884441103254, 'epoch': 3.0})
+>>> trainer.evaluate()
+The following columns in the evaluation set  don't have a corresponding argument in `BertForSequenceClassification.forward` and have been ignored: text. If text are not expected by `BertForSequenceClassification.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 4478
+  Batch size = 8
+100%|██████████████████████████████████████████████████████████████████████████████| 560/560 [1:08:49<00:00,  7.37s/it]
+{'eval_loss': 0.0280202254652977, 'eval_accuracy': 0.9944171505136221, 'eval_runtime': 4135.3635, 'eval_samples_per_second': 1.083, 'eval_steps_per_second': 0.135, 'epoch': 3.0}
+>>> trainer.save_model('atis-intent.model')
+Saving model checkpoint to atis-intent.model
+Configuration saved in atis-intent.model\config.json
+Model weights saved in atis-intent.model\pytorch_model.bin
