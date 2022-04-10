@@ -1,46 +1,31 @@
-
+import json
+import os
 from pathlib import Path
 from typing import Union
 
-from datasets import Dataset
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
-
-"""
-{
-  "AddToPlaylist": [
-    {
-      "data": [
-        {
-          "text": "Add another "
-        },
-        {
-          "text": "song",
-          "entity": "music_item"
-        },
-        {
-          "text": " to the "
-        },
-        {
-          "text": "Cita Romantica",
-          "entity": "playlist"
-        },
-        {
-          "text": " playlist. "
-        }
-      ]
-    }
-  ]
-}
-"""
+from ..base import BaseParser
 
 
-class JsonParser:
-    def __init__(self, ) -> None:
-        pass
+class JsonParser(BaseParser):
+    def __init__(self, location: Union[Path, str]) -> None:
+        super().__init__(location)
 
-    def convert_json_to_conll(self, record: dict) -> dict:
+    def load(self, location: Path=None):
+        records = []
+        location = location or self.location
+        if not location:
+            return
+        for file in location.iterdir():
+            intent = os.path.splitext(os.path.basename(file))[0]
+            with open(file, encoding="utf-8") as f:
+                records.extend([self.convert_json_to_conll(record, intent) for record in json.load(f)[intent]])
+        return records
+    
+    @staticmethod
+    def convert_json_to_conll(record: dict, intent: str=None) -> dict:
         """
         Method to convert the json format into ConLL format.
         We need to account for the B-ENT and I-ENT formatting.
@@ -63,5 +48,7 @@ class JsonParser:
             else:
                 # There is an entity. We need to split tokens on whitespace, prepend B and I
                 labels.extend([f"B-{label}"] + [f"I-{label}"]*(len(tokens) - 1))
-        return {"tokens": all_tokens, "ner_tags": labels}
+        if len(all_tokens) != len(labels):
+            raise ValueError("Length mismatch between tokens and labels")
+        return {"tokens": all_tokens, "ner_tags": labels, "intent": intent}
 

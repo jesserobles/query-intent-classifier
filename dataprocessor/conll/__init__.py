@@ -1,1 +1,1 @@
-from .conll import CONLLParser
+from .conll import CoNLLParser

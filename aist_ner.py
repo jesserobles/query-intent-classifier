@@ -8,11 +8,11 @@ from transformers import AutoTokenizer
 from transformers import AutoModelForTokenClassification, TrainingArguments, Trainer
 from transformers import DataCollatorForTokenClassification
 
-from dataprocessor.conll.conll import CONLLParser
+from dataprocessor.conll import CoNLLParser
 from datasets import Dataset
 
-train = CONLLParser('datasets/ATIS/train')
-test = CONLLParser('datasets/ATIS/test')
+train = CoNLLParser('datasets/ATIS/train')
+test = CoNLLParser('datasets/ATIS/test')
 train_dataset = Dataset.from_pandas(train.bert_ner_data())
 test_dataset = Dataset.from_pandas(train.bert_ner_data())
 

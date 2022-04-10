@@ -7,29 +7,11 @@ import logging
 from pathlib import Path
 from typing import Union
 
-from datasets import Dataset
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
+from ..base import BaseParser
 
-def get_all_tokens_and_ner_tags(directory):
-    return pd.concat([get_tokens_and_ner_tags(os.path.join(directory, filename)) for filename in os.listdir(directory)]).reset_index().drop('index', axis=1)
-    
-def get_tokens_and_ner_tags(filename):
-    with open(filename, 'r', encoding="utf8") as f:
-        lines = f.readlines()
-        split_list = [list(y) for x, y in itertools.groupby(lines, lambda z: z == '\n') if not x]
-        tokens = [[x.split('\t')[0] for x in y] for y in split_list]
-        entities = [[x.split('\t')[1][:-1] for x in y] for y in split_list] 
-    return pd.DataFrame({'tokens': tokens, 'ner_tags': entities})
-  
-def get_un_token_dataset(train_directory, test_directory):
-    train_df = get_all_tokens_and_ner_tags(train_directory)
-    test_df = get_all_tokens_and_ner_tags(test_directory)
-    train_dataset = Dataset.from_pandas(train_df)
-    test_dataset = Dataset.from_pandas(test_df)
-
-    return (train_dataset, test_dataset)
 
 class PairParser:
     """
@@ -42,16 +24,17 @@ class PairParser:
 
 
 
-class CONLLParser:
+class CoNLLParser(BaseParser):
     """
     Class to parse a dataset (test, train). It should be able to output formats
     for both HuggingFace and Rasa.
     """
     EXPECTED_FILES = {'label', 'seq.in', 'seq.out'}
     def __init__(self, location: Union[Path, str]) -> None:
-        if isinstance(location, str):
-            location = Path(location)
-        self.location: Path = location
+        # if isinstance(location, str):
+        #     location = Path(location)
+        # self.location: Path = location
+        super.__init__(location)
         self.data = self.load()
         self.label_encoder = LabelEncoder().fit(self.data['label'])
     
@@ -84,5 +67,37 @@ class CONLLParser:
         return pd.DataFrame({"tokens": [i.split() for i in self.data['seq.in']], "ner_tags": [o.split() for o in self.data["seq.out"]]})
 
     def bert_intent_data(self):
-        label_dict = {label: ix for ix, label in enumerate(sorted(set(self.data['label'])))}
         return pd.DataFrame([{"label": self.label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])])
+
+    @staticmethod
+    def conll_to_rasa(tokens: list[str], ner_tags: list[str]) -> str:
+        """
+        Method to convert from ConLL format to a string that can be
+        used in a rasa yaml file.
+        tokens = ["i", "would", "like", "to", "find", "a", "flight", "from", "charlotte", "to", "las", "vegas", "that", "makes", "a", "stop", "in", "st.", "louis"]
+        ner_tags = ["O", "O", "O", "O", "O", "O", "O", "O", "B-fromloc.city_name", "O", "B-toloc.city_name", "I-toloc.city_name", "O", "O", "O", "O", "O", "B-stoploc.city_name", "I-stoploc.city_name"]
+        output = "i would like to find a flight from [charlotte](fromloc.city_name) to [las vegas](toloc.city_name) that makes a stop in [st. louis](stoploc.city_name)"
+        """
+        annotated_tokens = []
+        current_entity_tokens = [] # We'll use this to keep track of entities
+        current_entity_tag = None
+        for token, tag in zip(tokens, ner_tags):
+            if current_entity_tokens: # We are in the middle of an entity
+                if tag == 'O' or tag.startswith('B'): # We are outside of the previous entity
+                    annotated_token = f"[{' '.join(current_entity_tokens)}]({current_entity_tag})"
+                    annotated_tokens.append(annotated_token)
+                    current_entity_tokens = []
+                    current_entity_tag = None
+                else: # Just append the token
+                    current_entity_tokens.append(token)
+                    continue
+            if tag != 'O': # Entity
+                current_entity_tag = tag.split('-')[-1]
+                current_entity_tokens.append(token)
+            else: # Just append the token
+                annotated_tokens.append(token)
+        # Append any remaining tokens
+        if current_entity_tokens:
+            annotated_token = f"[{' '.join(current_entity_tokens)}]({current_entity_tag})"
+            annotated_tokens.append(annotated_token)
+        return ' '.join(annotated_tokens)

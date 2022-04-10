@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trai
 import numpy as np
 import torch
 
-from dataprocessor.conll.conll import CONLLParser
+from dataprocessor.conll.conll import CoNLLParser
 
 
 # device = torch.device("cpu")
@@ -16,8 +16,8 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
-train = CONLLParser('datasets/ATIS/train')
-test = CONLLParser('datasets/ATIS/test')
+train = CoNLLParser('datasets/ATIS/train')
+test = CoNLLParser('datasets/ATIS/test')
 train_dataset = Dataset.from_pandas(train.bert_intent_data())
 test_dataset = Dataset.from_pandas(train.bert_intent_data())
 
