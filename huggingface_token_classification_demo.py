@@ -25,8 +25,8 @@ label_list = wnut["train"].features[f"ner_tags"].feature.names
 
 
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
-tokenized_input = tokenizer(wnut['train']["tokens"], is_split_into_words=True)
-tokens = tokenizer.convert_ids_to_tokens(tokenized_input["input_ids"])
+# tokenized_input = tokenizer(wnut['train']["tokens"], is_split_into_words=True)
+# tokens = tokenizer.convert_ids_to_tokens(tokenized_input["input_ids"])
 tokenized_wnut = wnut.map(tokenize_and_align_labels, batched=True, fn_kwargs={"tokenizer": tokenizer})
 
 data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
