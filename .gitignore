@@ -2,6 +2,9 @@ datasets/
 test_trainer/
 test-ner/
 atis-intent.model/
+rasa-models/.rasa/
+rasa-models/models/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

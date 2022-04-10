@@ -7,7 +7,7 @@ import torch
 from dataprocessor.conll.conll import CONLLParser
 
 
-device = torch.device("cpu")
+# device = torch.device("cpu")
 
 metric = load_metric("accuracy")
 
