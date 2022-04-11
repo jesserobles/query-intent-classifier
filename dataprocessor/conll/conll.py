@@ -7,21 +7,27 @@ import logging
 from pathlib import Path
 from typing import Union
 
+from datasets import Dataset, DatasetDict, ClassLabel, Sequence
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 from ..base import BaseParser
 
 
-class PairParser:
+class DatasetCombiner(BaseParser):
     """
     Class for parsing a text line and its associated CONLL information.
-    TODO: Figure out the entity data that Huggingface requires for BERT
     """
-    def __init__(self, text_line: str, conll_line: str) -> None:
-        self.text_line: list[str] = text_line.strip().split()
-        self.conll_line: list[str] = conll_line.strip().split()
-
+    FOLDERS = {'train', 'test'}
+    def __init__(self, location: Union[Path, str]) -> None:
+        super().__init__(location)
+        self.payload = {}
+        self.datasets = {}
+        for folder in self.FOLDERS:
+            parser = CoNLLParser(self.location.joinpath(folder))
+            self.datasets[folder] = parser
+            self.payload[folder] = parser.bert_ner_data()
+        self.dataset = DatasetDict(self.payload)
 
 
 class CoNLLParser(BaseParser):
@@ -31,13 +37,11 @@ class CoNLLParser(BaseParser):
     """
     EXPECTED_FILES = {'label', 'seq.in', 'seq.out'}
     def __init__(self, location: Union[Path, str]) -> None:
-        # if isinstance(location, str):
-        #     location = Path(location)
-        # self.location: Path = location
-        super.__init__(location)
+        super().__init__(location)
+        self.seq_label_encoder = LabelEncoder()
         self.data = self.load()
-        self.label_encoder = LabelEncoder().fit(self.data['label'])
-    
+        self.intent_label_encoder = LabelEncoder().fit(self.data['label'])
+        
     def load(self, location: Path=None):
         payload = {}
         location = location or self.location
@@ -48,7 +52,7 @@ class CoNLLParser(BaseParser):
             with open(file_location, encoding="utf-8") as f:
                 data = [line.strip() for line in f.read().strip().splitlines()]
             payload[file] = data
-        payload['label_list'] = self.generate_labels(payload['seq.out'])
+        payload['ner_labels'] = self.generate_labels(payload['seq.out'])
         return payload
     
     def generate_labels(self, labels_seq):
@@ -60,14 +64,25 @@ class CoNLLParser(BaseParser):
         labels.remove('O')
         cleaned_labels = ['O'] + labels
         label_encoding = {c: ix for ix, c in enumerate(cleaned_labels)}
-        return {"labels_list": cleaned_labels, "label_encoding": label_encoding}
-
+        # label_encoding = self.seq_label_encoder.fit_transform(cleaned_labels)
+        return {"names": cleaned_labels, "label_encoding": label_encoding}
 
     def bert_ner_data(self):
-        return pd.DataFrame({"tokens": [i.split() for i in self.data['seq.in']], "ner_tags": [o.split() for o in self.data["seq.out"]]})
+        labels = self.data['ner_labels']
+        ner_tags = ClassLabel(names=labels['names'])
+        ner_data = [[labels['label_encoding'][tag] for tag in line.split()] for line in self.data['seq.out']]
+        payload = {
+            "id": range(len(self.data['seq.in'])),
+            "text": self.data['seq.in'],
+            "ner_tags": ner_data,
+            # "ner_tags": [self.seq_label_encoder.transform(seq.split()).tolist() for seq in self.data['seq.out']]
+        }
+        dataset = Dataset.from_dict(payload)
+        dataset.features.update({"ner_tags": Sequence(feature=ner_tags)})
+        return  dataset
 
     def bert_intent_data(self):
-        return pd.DataFrame([{"label": self.label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])])
+        return pd.DataFrame([{"label": self.intent_label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])])
 
     @staticmethod
     def conll_to_rasa(tokens: list[str], ner_tags: list[str]) -> str:

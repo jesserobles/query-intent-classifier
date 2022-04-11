@@ -1,1 +1,1 @@
-from .conll import CoNLLParser
+from .conll import CoNLLParser, DatasetCombiner

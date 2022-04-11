@@ -4,7 +4,7 @@ test-ner/
 atis-intent.model/
 rasa-models/.rasa/
 rasa-models/models/*
-
+results/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
