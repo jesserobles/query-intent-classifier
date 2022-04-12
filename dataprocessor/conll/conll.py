@@ -1,6 +1,7 @@
 """
 This module contains utilities for parsing the datasets that are in conll format for this project
 """
+from collections import defaultdict
 import os
 import itertools
 import logging
@@ -26,7 +27,7 @@ class DatasetCombiner(BaseParser):
         for folder in self.FOLDERS:
             parser = CoNLLParser(self.location.joinpath(folder))
             self.datasets[folder] = parser
-            self.payload[folder] = parser.bert_ner_data()
+            self.payload[folder] = parser.to_bert_ner_data()
         self.dataset = DatasetDict(self.payload)
 
 
@@ -42,7 +43,7 @@ class CoNLLParser(BaseParser):
         self.data = self.load()
         self.intent_label_encoder = LabelEncoder().fit(self.data['label'])
         
-    def load(self, location: Path=None):
+    def load(self, location: Path=None) -> dict:
         payload = {}
         location = location or self.location
         if not location:
@@ -53,9 +54,18 @@ class CoNLLParser(BaseParser):
                 data = [line.strip() for line in f.read().strip().splitlines()]
             payload[file] = data
         payload['ner_labels'] = self.generate_labels(payload['seq.out'])
+        payload['tokens'] = [text.split() for text in payload['seq.in']]
+        payload['ner_tags_names'] = [line.split() for line in payload['seq.out']]
+        payload['ner_tags'] = [[payload['ner_labels']['label_encoding'][tag] for tag in line.split()] for line in payload['seq.out']]
+        # Validate that the tokens and labels are aligned
+        for tokens, ner_tags in zip(payload['tokens'], payload['ner_tags']):
+            if len(tokens) != len(ner_tags):
+                raise ValueError(f"Mismatched lengths of tokens and ner_tags: {len(tokens)} != {len(ner_tags)}")
+        if len(payload['label']) != len(payload['tokens']) != len(payload['ner_tags']):
+            raise ValueError(f"Mismatched lengths of tokens and ner_tags: label={len(payload['label'])}, tokens={len(payload['tokens'])}, ner_tags={payload['ner_tags']}")
         return payload
     
-    def generate_labels(self, labels_seq):
+    def generate_labels(self, labels_seq) -> Dataset:
         """
         Create all labels from a list of the form ['B-ORG', 'B-LOC', 'I-LOC']
         so that it adds missing data.
@@ -67,15 +77,14 @@ class CoNLLParser(BaseParser):
         # label_encoding = self.seq_label_encoder.fit_transform(cleaned_labels)
         return {"names": cleaned_labels, "label_encoding": label_encoding}
 
-    def bert_ner_data(self):
+    def to_bert_ner_data(self):
         labels = self.data['ner_labels']
+        tokens = self.data['tokens']
         ner_tags = ClassLabel(names=labels['names'])
-        ner_data = [[labels['label_encoding'][tag] for tag in line.split()] for line in self.data['seq.out']]
         payload = {
             "id": range(len(self.data['seq.in'])),
-            "text": self.data['seq.in'],
-            "ner_tags": ner_data,
-            # "ner_tags": [self.seq_label_encoder.transform(seq.split()).tolist() for seq in self.data['seq.out']]
+            "tokens": tokens,
+            "ner_tags": self.data['ner_tags'],
         }
         dataset = Dataset.from_dict(payload)
         dataset.features.update({"ner_tags": Sequence(feature=ner_tags)})
@@ -83,6 +92,22 @@ class CoNLLParser(BaseParser):
 
     def bert_intent_data(self):
         return pd.DataFrame([{"label": self.intent_label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])])
+
+    def to_rasa_data(self) -> str:
+        tokens = self.data['tokens']
+        ner_tags = self.data['ner_tags_names']
+        intents = self.data['label']
+        grouped_intents = defaultdict(list)
+        for intent, tags, toks in zip(intents, ner_tags, tokens):
+            grouped_intents[intent.replace('#', '+')].append(self.conll_to_rasa(toks, tags))
+        payload = []
+        for intent, lines in grouped_intents.items():
+            if len(lines) < 2:
+                continue
+            examples = '\n    - '.join(lines)
+            block = f'- intent: {intent}\n  examples: |\n    - {examples}\n'
+            payload.append(block)
+        return 'version: "3.1"\n\nnlu:\n' + ''.join(payload)
 
     @staticmethod
     def conll_to_rasa(tokens: list[str], ner_tags: list[str]) -> str:

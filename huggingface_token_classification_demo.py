@@ -6,51 +6,27 @@ from transformers import AutoModelForTokenClassification, AutoTokenizer, DataCol
 
 from dataprocessor.conll import DatasetCombiner
 
-# def tokenize_and_align_labels(examples, tokenizer, key='tokens'):
-#     is_split_into_words = False
-#     if key == 'tokens':
-#         is_split_into_words = True
-#     tokenized_inputs = tokenizer(examples[key], truncation=True, is_split_into_words=is_split_into_words)
-#     labels = []
-#     for i, label in enumerate(examples[f"ner_tags"]):
-#         word_ids = tokenized_inputs.word_ids(batch_index=i)  # Map tokens to their respective word.
-#         previous_word_idx = None
-#         label_ids = []
-#         for word_idx in word_ids:  # Set the special tokens to -100.
-#             if word_idx is None:
-#                 label_ids.append(-100)
-#             elif word_idx != previous_word_idx:  # Only label the first token of a given word.
-#                 label_ids.append(label[word_idx])
-#             else:
-#                 label_ids.append(-100)
-#             previous_word_idx = word_idx
-#         labels.append(label_ids)
-#     tokenized_inputs["labels"] = labels
-#     return tokenized_inputs
-
-def tokenize_and_align_labels(examples, tokenizer, label_encoding_dict, key="tokens"):
-    is_split_into_words = False
-    if key == 'tokens':
-        is_split_into_words = True
-    label_all_tokens = True
-    tokenized_inputs = tokenizer(list(examples[key]), truncation=True, is_split_into_words=is_split_into_words)
+def tokenize_and_align_labels(examples, tokenizer, task="ner", label_all_tokens=True):
+    tokenized_inputs = tokenizer(examples["tokens"], truncation=True, is_split_into_words=True)
     labels = []
-    for i, label in enumerate(examples[f"ner_tags"]):
+    for i, label in enumerate(examples[f"{task}_tags"]):
         word_ids = tokenized_inputs.word_ids(batch_index=i)
         previous_word_idx = None
         label_ids = []
         for word_idx in word_ids:
+            # Special tokens have a word id that is None. We set the label to -100 so they are automatically
+            # ignored in the loss function.
             if word_idx is None:
                 label_ids.append(-100)
-            elif label[word_idx] == '0':
-                label_ids.append(0)
+            # We set the label for the first token of each word.
             elif word_idx != previous_word_idx:
-                label_ids.append(label_encoding_dict[label[word_idx]])
+                label_ids.append(label[word_idx])
+            # For the other tokens in a word, we set the label to either the current label or -100, depending on
+            # the label_all_tokens flag.
             else:
-                label_ids.append(label_encoding_dict[label[word_idx]] if label_all_tokens else -100)
+                label_ids.append(label[word_idx] if label_all_tokens else -100)
             previous_word_idx = word_idx
         labels.append(label_ids)
-        
     tokenized_inputs["labels"] = labels
     return tokenized_inputs
 
@@ -75,15 +51,13 @@ def compute_metrics(p):
         "accuracy": results["overall_accuracy"],
     }
 
-# dataset = load_dataset("wnut_17")
 dataset_combiner = DatasetCombiner(os.path.join("datasets", "ATIS"))
 dataset = dataset_combiner.dataset
+dataset = load_dataset("conll2003")
 label_list = dataset["train"].features[f"ner_tags"].feature.names
 
-label_encoding_dict = dataset_combiner.datasets['train'].data['ner_labels']['label_encoding']
-
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
-tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True, fn_kwargs={"tokenizer": tokenizer, "key": "text", "label_encoding_dict": label_encoding_dict})
+tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True, fn_kwargs={"tokenizer": tokenizer})
 
 data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 
@@ -95,7 +69,7 @@ training_args = TrainingArguments(
     learning_rate=2e-5,
     per_device_train_batch_size=16,
     per_device_eval_batch_size=16,
-    num_train_epochs=3,
+    num_train_epochs=10,
     weight_decay=0.01,
 )
 
@@ -109,3 +83,4 @@ trainer = Trainer(
     compute_metrics=compute_metrics
 )
 trainer.train()
+trainer.evaluate()
