@@ -38,3 +38,10 @@ agent.load_model(model_path=model_path)
 message = UserMessage("hello")
 agent.processor._parse_message_with_graph(message)
 ```
+
+## Train a model with a fixed name (doesn't work on windows)
+```bash
+rasa train --data atis/ -c config.yml -d domain.yml --out out/ --fixed-model-name foo nlu
+
+rasa train --data nlu_data/ -c config.yml -d domain.yml --fixed-model-name foo nlu
+```
