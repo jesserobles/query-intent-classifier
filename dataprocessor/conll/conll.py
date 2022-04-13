@@ -6,7 +6,7 @@ import os
 import itertools
 import logging
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 
 from datasets import Dataset, DatasetDict, ClassLabel, Sequence
 import pandas as pd
@@ -127,7 +127,7 @@ class CoNLLParser(BaseParser):
         return 'version: "3.1"\n\nnlu:\n' + ''.join(payload)
 
     @staticmethod
-    def conll_to_rasa(tokens: list[str], ner_tags: list[str]) -> str:
+    def conll_to_rasa(tokens: List[str], ner_tags: List[str]) -> str:
         """
         Method to convert from ConLL format to a string that can be
         used in a rasa yaml file.
