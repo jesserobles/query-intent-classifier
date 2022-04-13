@@ -4468,9 +4468,6 @@ nlu:
     - show me all [meals](meal) on flights from [atlanta](fromloc.city_name) to [washington](toloc.city_name)
     - what types of [meals](meal) are available
     - what are all the available [meals](meal)
-- intent: atis_aircraft+atis_flight+atis_flight_no
-  examples: |
-    - i want to fly from [detroit](fromloc.city_name) to [st. petersburg](toloc.city_name) on [northwest airlines](airline_name) and leave [around](depart_time.time_relative) [9 am](depart_time.time) tell me what aircraft are used by this flight and tell me the flight number
 - intent: atis_flight_no
   examples: |
     - list the number of flights arriving in [dallas fort worth](toloc.city_name) from [boston](fromloc.city_name) [before](arrive_time.time_relative) [noon](arrive_time.time)
@@ -4515,9 +4512,3 @@ nlu:
   examples: |
     - may i please see airlines and flight numbers from [new york](fromloc.city_name) to [toronto](toloc.city_name) on the [same](depart_date.date_relative) date [june](depart_date.month_name) [seventeenth](depart_date.day_number) also arriving in [toronto](toloc.city_name) [before](arrive_time.time_relative) [noon](arrive_time.time) thank you
     - airline and flight number from [columbus](fromloc.city_name) to [minneapolis](toloc.city_name)
-- intent: atis_cheapest
-  examples: |
-    - show me the [cheapest](cost_relative) fare in the database
-- intent: atis_ground_service+atis_ground_fare
-  examples: |
-    - what ground transportation is available from the [pittsburgh airport](fromloc.airport_name) to downtown and how much does it cost

@@ -53,7 +53,6 @@ def compute_metrics(p):
 
 dataset_combiner = DatasetCombiner(os.path.join("datasets", "ATIS"))
 dataset = dataset_combiner.dataset
-dataset = load_dataset("conll2003")
 label_list = dataset["train"].features[f"ner_tags"].feature.names
 
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")

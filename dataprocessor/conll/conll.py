@@ -50,17 +50,22 @@ class CoNLLParser(BaseParser):
             return
         for file in self.EXPECTED_FILES:
             file_location = location.joinpath(file)
+            if not file_location.exists():
+                continue
             with open(file_location, encoding="utf-8") as f:
                 data = [line.strip() for line in f.read().strip().splitlines()]
             payload[file] = data
-        payload['ner_labels'] = self.generate_labels(payload['seq.out'])
         payload['tokens'] = [text.split() for text in payload['seq.in']]
-        payload['ner_tags_names'] = [line.split() for line in payload['seq.out']]
-        payload['ner_tags'] = [[payload['ner_labels']['label_encoding'][tag] for tag in line.split()] for line in payload['seq.out']]
-        # Validate that the tokens and labels are aligned
-        for tokens, ner_tags in zip(payload['tokens'], payload['ner_tags']):
-            if len(tokens) != len(ner_tags):
-                raise ValueError(f"Mismatched lengths of tokens and ner_tags: {len(tokens)} != {len(ner_tags)}")
+        if 'seq.out' in payload:
+            payload['ner_labels'] = self.generate_labels(payload['seq.out'])
+            payload['ner_tags_names'] = [line.split() for line in payload['seq.out']]
+            payload['ner_tags'] = [[payload['ner_labels']['label_encoding'][tag] for tag in line.split()] for line in payload['seq.out']]
+            if len(payload['label']) != len(payload['tokens']) != len(payload['ner_tags']):
+                raise ValueError(f"Mismatched lengths of tokens and ner_tags: label={len(payload['label'])}, tokens={len(payload['tokens'])}, ner_tags={payload['ner_tags']}")
+            # Validate that the tokens and labels are aligned
+            for tokens, ner_tags in zip(payload['tokens'], payload['ner_tags']):
+                if len(tokens) != len(ner_tags):
+                    raise ValueError(f"Mismatched lengths of tokens and ner_tags: {len(tokens)} != {len(ner_tags)}")
         if len(payload['label']) != len(payload['tokens']) != len(payload['ner_tags']):
             raise ValueError(f"Mismatched lengths of tokens and ner_tags: label={len(payload['label'])}, tokens={len(payload['tokens'])}, ner_tags={payload['ner_tags']}")
         return payload
@@ -94,10 +99,22 @@ class CoNLLParser(BaseParser):
         return pd.DataFrame([{"label": self.intent_label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])])
 
     def to_rasa_data(self) -> str:
+        grouped_intents = defaultdict(list)
+        intents = self.data['label']
+        if not 'seq.out' in self.data:
+            utterances = self.data['seq.in']
+            payload = []
+            for intent, utterance in zip(intents, utterances):
+                grouped_intents[intent.replace('#', '+')].append(utterance)
+            for intent, lines in grouped_intents.items():
+                if len(lines) < 2:
+                    continue
+                examples = '\n    - '.join(lines)
+                block = f'- intent: {intent}\n  examples: |\n    - {examples}\n'
+                payload.append(block)
+            return 'version: "3.1"\n\nnlu:\n' + ''.join(payload)
         tokens = self.data['tokens']
         ner_tags = self.data['ner_tags_names']
-        intents = self.data['label']
-        grouped_intents = defaultdict(list)
         for intent, tags, toks in zip(intents, ner_tags, tokens):
             grouped_intents[intent.replace('#', '+')].append(self.conll_to_rasa(toks, tags))
         payload = []

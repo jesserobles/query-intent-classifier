@@ -45,3 +45,40 @@ rasa train --data atis/ -c config.yml -d domain.yml --out out/ --fixed-model-nam
 
 rasa train --data nlu_data/ -c config.yml -d domain.yml --fixed-model-name foo nlu
 ```
+
+## Generate Rasa Dataset from CoNLL Format
+```python
+import os
+from pathlib import Path
+
+from dataprocessor import CoNLLParser
+
+dataset_name = "ATIS"
+data_folder = os.path.join('datasets', dataset_name, 'train')
+dest_folder = Path(os.path.join('rasa-models', 'atis'))
+dest_folder.mkdir(parents=True, exist_ok=True)
+dest_file = dest_folder.joinpath(f'{dataset_name.lower()}.yml')
+
+parser = CoNLLParser(data_folder)
+data = parser.to_rasa_data()
+
+with open(dest_file, 'w') as file:
+    file.write(data)
+
+import os
+from pathlib import Path
+
+from dataprocessor import CsvParser
+
+dataset_name = "search_trends"
+data_folder = os.path.join('datasets', 'search_trends', 'US_l1_vaccination_trending_searches.csv')
+dest_folder = Path(os.path.join('rasa-models', dataset_name.lower()))
+dest_folder.mkdir(parents=True, exist_ok=True)
+dest_file = dest_folder.joinpath(f'data.yml')
+
+parser = CsvParser(data_folder)
+data = parser.to_rasa_data()
+
+with open(dest_file, 'w', encoding='utf-8') as file:
+    file.write(data)
+```
