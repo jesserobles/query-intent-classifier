@@ -510,28 +510,28 @@ nlu:
   examples: |
     - why did they charge me an extra $1?
     - why is there a 1 euro fee on my statement?
-    - why do i see an extra £1 charge on my statement?
+    - why do i see an extra Â£1 charge on my statement?
     - i am inquiring about a $1 charge on my statement.
     - what is the $1 transaction on my account?
     - what is this extra pound charge for?
     - i was charged $1 in a transaction.
     - what is the reason for the extra fee on my statement?
     - have have a small charge on my account from someone i purchased with but i'm not sure what it relates to.
-    - i have a strange transaction for £1 on my statement, what is that?
+    - i have a strange transaction for Â£1 on my statement, what is that?
     - i have no idea why there is a dollar that has been charged to my account.
     - i have been charged a pound for something that appears on my statement
     - why is there a $1 charge on my statement?
-    - where did this extra €1 fee on my statement come from?
-    - is there a reason why there is an extra £1 charge on my account?
+    - where did this extra â‚¬1 fee on my statement come from?
+    - is there a reason why there is an extra Â£1 charge on my account?
     - can you tell me what this fee is on my statement?
     - why has another fee been placed on my statement?
     - there has been a charge pending on my account statement that i can't figue out it's for a dollar.
-    - €1 was in my statement as an extra fee.
+    - â‚¬1 was in my statement as an extra fee.
     - why is there an extra charge on my statement.
     - hey, i got charged extra for some reason when i purchased an app. is this a hidden fee or something? i don't think it's very cool.
     - i see a $1 charge in a transaction.
     - i had to pay a pound more than i anticipated!
-    - there is a €1 extra fee in my statement
+    - there is a â‚¬1 extra fee in my statement
     - my statement contained a one pound extra fee
     - i checked my account today and saw that i was charged an extra pound that i did not spend.
     - i see i was charged $1 for a transaction.
@@ -541,15 +541,15 @@ nlu:
     - i was wrongfully charged one pound.
     - why is there an extra fee charged?
     - i just checked my statement and saw a $1 charge, why is it there?
-    - there is an odd 1£ charge that appears as pending on my statement. what's the reason for that? i haven't purchased anything for a pound.
+    - there is an odd 1Â£ charge that appears as pending on my statement. what's the reason for that? i haven't purchased anything for a pound.
     - why have i been charged an extra pound?
     - i think i may have been charged $1 extra on my app.  could you provide some insight as to why this may have happened?
-    - why do i see an extra €1 charge on my statement?
+    - why do i see an extra â‚¬1 charge on my statement?
     - is the 1 pound charge i can see an error or an incorrect entry?
     - why did i get a $1 extra fee on the statement?
     - why was i charged $1 in a transaction?
     - why is there a service fee on my statement?
-    - my statement shows a 1£ purchase pending. i do not remember making this purchase, please let me know what this is about.
+    - my statement shows a 1Â£ purchase pending. i do not remember making this purchase, please let me know what this is about.
     - i am seeing and extra 1$ charged to my account and wanted to know about it.
     - why did you charge me extra?
     - an extra pound was charged!
@@ -558,25 +558,25 @@ nlu:
     - there must have been a mistake, why was i charged an extra pound?
     - when i look at my statement there is an extra fee, that is for what?
     - there is an extra small charge on my card! what do i do?
-    - i looked at my statement, and there is a charge for 1£ that i don't recognize.  why is it on there?
-    - i got a €1 extra fee in my statement
+    - i looked at my statement, and there is a charge for 1Â£ that i don't recognize.  why is it on there?
+    - i got a â‚¬1 extra fee in my statement
     - what is the extra fee on my statement?
-    - why have i been charged an extra £1?
-    - in my statement, i got a €1 extra fee.
+    - why have i been charged an extra Â£1?
+    - in my statement, i got a â‚¬1 extra fee.
     - i see a charge of 1l i do not recognize on my statement
     - i was overcharged one extra pound!
     - i noticed an extra pound charge?
     - why does my statement show a $1 charge on my account?
     - why has my card been charged an extra pound?
     - why does my statement have an extra fee?
-    - there is a  €1 fee on my account i didn't authorize
+    - there is a  â‚¬1 fee on my account i didn't authorize
     - i was made to pay an additional pound!
     - i was charged an extra pound for no reason. why is that?
     - it appears i have a fee in my statement.
     - when did i get a $1 extra fee on my statement?
     - what is this fee debit on my account?
     - i was charged an extra dollar on my account and would like to know the reason.
-    - what is this extra €1 fee about?
+    - what is this extra â‚¬1 fee about?
     - i was overcharged a pound.
     - why do i have an extra fee on my statement?
     - what was the $1 charge for on my statement?
@@ -587,31 +587,31 @@ nlu:
     - why was i charged an extra pound?
     - i am being charged a pound out of nowhere. what is this?
     - a pending charge of 1l appears on my statement.  please explain as i have not made a purchase for that amount
-    - why did you guys charge me an extra €1?
+    - why did you guys charge me an extra â‚¬1?
     - why was i charged more than i should have been?
     - what is the fee on my statement for?
     - hello, there seems to be a billing mistake associated with my account.  my app was charged $1 more than it should have.  could you please explain why this may have happened?
     - i need some help figuring out what this strange payment is on my account. it's stays pending and won't go away.
     - what is this $1 charge on my account?
-    - there is a 1£ charge that appears as pending on my statement. what is that? i haven't purchased anything for a pound there.
+    - there is a 1Â£ charge that appears as pending on my statement. what is that? i haven't purchased anything for a pound there.
     - why did a transaction i made charge me $1?
-    - there seems to be an additional charge of £1 on my statement, what is the reason for this?
+    - there seems to be an additional charge of Â£1 on my statement, what is the reason for this?
     - i still have not received an answer as to why i was charged $1.00 in a transaction?
-    - there is some odd 1£ charge that appears as pending on my statement. what's that about? pretty sure i haven't purchased anything for a pound there.
+    - there is some odd 1Â£ charge that appears as pending on my statement. what's that about? pretty sure i haven't purchased anything for a pound there.
     - there is a pending payment on my account that is very strange. i don't remember making this and it won't go away. can you help me figure this out?
     - can you tell me about why the account i have was charged an extra 1$
     - why does my statement contain an extra fee?
     - can you tell me why i was charged $1 for a transaction?
-    - why is there an extra €1 fee in my statement?
-    - there is an extra charge on my account i didn't authorise, it's just £1, what is it?
+    - why is there an extra â‚¬1 fee in my statement?
+    - there is an extra charge on my account i didn't authorise, it's just Â£1, what is it?
     - what is the dollar that i have pending on my statement there?
-    - i see an extra $1  charge on my statement, why is this?
-    - can you please explain to me why there is an extra €1 fee in my statement?
+    - i see an extra $1Â  charge on my statement, why is this?
+    - can you please explain to me why there is an extra â‚¬1 fee in my statement?
     - how can i find out about an extra fee on my statement?
     - hello, i see that i have been charged an extra $1 on my app.  could you please provide me with a reason for this charge?
     - is there a reason there's an extra fee on my statement?
     - what is this extra fee on my statement.
-    - what does the €1 fee mean?
+    - what does the â‚¬1 fee mean?
     - i checked my statement and am being charged one pound. where did this charge come from?
     - i do not know why i was charged for the $1 transaction.
     - i wanted to know about a pending dollar that is on my statement.
@@ -619,15 +619,15 @@ nlu:
     - how come there is a $1 extra charge on my statement?
     - i was charged an extra pound.
     - there is a charge for an additional pound.
-    - there is a strange 1£ charge that appears as pending on my statement. what's the cause for that? i haven't purchased anything for a pound.
+    - there is a strange 1Â£ charge that appears as pending on my statement. what's the cause for that? i haven't purchased anything for a pound.
     - i need to know what these extra charges are on my statement?
     - how come there is an extra fee on my statement?
     - why is there an extra charge of 1 dollar on my statement?
     - i checked my statement and saw a charge of one pound, where is this charge coming from?
-    - i don't understand why there is an extra €1 fee in my statement.
+    - i don't understand why there is an extra â‚¬1 fee in my statement.
     - why was i charged extra on my app?
     - why was my account assessed a fee?
-    - there is an extra 1£ charge on my app. why did you charge me extra?
+    - there is an extra 1Â£ charge on my app. why did you charge me extra?
     - why i'm i being charged an extra pound
     - the $1.00 has still not been reverted as indicated in the previous email.
     - my statement shows and extra 1$ that was charged to it and i would like to know why.
@@ -635,25 +635,25 @@ nlu:
     - is the 1 pound charge going to be reimbursed on my card?
     - why is there a fee added to my statement?
     - why would there be an extra charge on my app?
-    - there is a charge for 1£ on my statement.  i do not think that i bought anything that costed 1£.  what is going on?
-    - there is  an extra 1£ charge on my app. why did it charge me extra?
+    - there is a charge for 1Â£ on my statement.  i do not think that i bought anything that costed 1Â£.  what is going on?
+    - there is  an extra 1Â£ charge on my app. why did it charge me extra?
     - why is there an additional fee showing on the statement i received?
     - how come i was charged a transaction of $1?
     - please explain the charge of 1l in error.  i have purchased nothing in this amount.
-    - where did the  €1 fee in my statement come from
+    - where did the  â‚¬1 fee in my statement come from
     - what is this random charge of one pound doing on my account?
     - i had to pay one pound more than the set price!
-    - my statement is showing an extra £1 charge and i am unsure why. is there an explanation for this?
+    - my statement is showing an extra Â£1 charge and i am unsure why. is there an explanation for this?
     - why is it showing that my account has been charged a dollar that is showing as pending?
-    - i do not understand why there is a pending 1£ charge on my statement, i do not recall making this transaction. can you please tell me what this is about?
+    - i do not understand why there is a pending 1Â£ charge on my statement, i do not recall making this transaction. can you please tell me what this is about?
     - my statement shows an extra fee - what is it?
-    - what is this €1 charge?
-    - i've been charged an extra £1 and i don't know what it's for
+    - what is this â‚¬1 charge?
+    - i've been charged an extra Â£1 and i don't know what it's for
     - i was overcharged an additional pound.
-    - i've been charged an extra £1 and i don't know why
+    - i've been charged an extra Â£1 and i don't know why
     - my statement is showing i was charged a dollar and i am not sure why.
-    - why is there a €1 charge on my statement?
-    - an extra fee of €1 was in my statement
+    - why is there a â‚¬1 charge on my statement?
+    - an extra fee of â‚¬1 was in my statement
 - intent: pending_cash_withdrawal
   examples: |
     - why is my cash withdrawal still showing as pending?
@@ -2201,7 +2201,7 @@ nlu:
     - why is there a fee when i thought there would be no fees?
     - why are there fees for using a card?
     - i had to pay money for paying with my card.
-    - i'm going on holiday to france for 6 weeks with my family and the cat, fluffy.  i just purchased €10,000 from a currency exchange to ensure we don't run short but there appears to be a fee.  what is this for?
+    - i'm going on holiday to france for 6 weeks with my family and the cat, fluffy.  i just purchased â‚¬10,000 from a currency exchange to ensure we don't run short but there appears to be a fee.  what is this for?
     - what are the reasons to be charged a fee on card payments?
     - i paid with card and was charged a fee that shouldn't be there!
     - why was i charged an extra fee when paying with card?
@@ -6103,7 +6103,7 @@ nlu:
     - how do i go about changing my pin?
     - am i able to change my pin at certain cash machines?
     - your atm pin can be changed at any visa or mastercard atm with pin services. certain countries don't support atm pin changes.
-    - i am on vacation in spain and think someone saw my pin when… can i change it at a local atm?
+    - i am on vacation in spain and think someone saw my pin whenâ€¦ can i change it at a local atm?
     - i'm on vacation in europe but i desperately need to change my pin. can i do this from abroad?
     - can i reset my pin?
     - at what cash machines can i change my pin?
@@ -6627,7 +6627,7 @@ nlu:
     - i need assistance completing a transfer. i'm trying to purchase a flat and need the money for the initial mortgage payment. i keep getting an error and the transfer is not going through. what is going on here?
     - what are the reasons that my mortgage payment won't go through? i'm getting an error and don't know how to correct to get this transfer to go through.
     - why was i unable to complete my transfer?
-    - hi, i'm buying my son bertie a starter home in london.  i'm just trying to send the 5% deposit over to the agent. it's only £200,000 but seems to be throwing an error.  what is going on?  if i wait any longer the house prices might rise, can you look in to it please?
+    - hi, i'm buying my son bertie a starter home in london.  i'm just trying to send the 5% deposit over to the agent. it's only Â£200,000 but seems to be throwing an error.  what is going on?  if i wait any longer the house prices might rise, can you look in to it please?
     - i'm trying to make a bank transfer but it's not going through. could there not be enough funds to transfer or something? have i done it too many times?
     - i need to know what is going on. i'm attempting to purchase a flat and need the money to pay on my initial mortgage payment. i'm only getting an error. can you find out what's going on and help in making the transfer?
     - can you please explain why my transfer failed?
@@ -7713,10 +7713,10 @@ nlu:
     - i got a notice from my app that i withdrew cash but i don't remember doing so. how do i fix this?
     - why do i see a random withdrawal in my app?
     - hello, please look into this matter urgently. as i have lost my wallet and i can see one withdrawal, now i do not want to loose more money.
-    - someone has a copy of my card. i have my card with me, but someone just made a 500£ cash withdrawal. help me.
+    - someone has a copy of my card. i have my card with me, but someone just made a 500Â£ cash withdrawal. help me.
     - there is a withdrawal on my account that i don't remember initiating.
     - i got a message saying i made a withdrawal from the bank machine, but i did not.
-    - someone has copied my card. i have my card with me, but someone just made a 500£ cash withdrawal. please help now.
+    - someone has copied my card. i have my card with me, but someone just made a 500Â£ cash withdrawal. please help now.
     - help, i see money missing i didn't take out.
     - my wallet was taken and i see that someone is using my card!   please help me!
     - i see cash withdrawal activity in the app that is not mine.
@@ -7802,7 +7802,7 @@ nlu:
     - hello, just now i got to know withdrawal of money from of my account. as someone used my card to withdraw amount in any odd remote area. since i have not been in that area, please freeze my card immediately.
     - there has a recent suspicious withdrawal on my bank account. is it possible to freeze my card?
     - i am seeing in the app a some cash withdrawal that i did not do
-    - i think somebody made an unauthorized copy of my card.  my account has a cash withdrawal for 500£ that i did not make.  please help.
+    - i think somebody made an unauthorized copy of my card.  my account has a cash withdrawal for 500Â£ that i did not make.  please help.
     - my account shows that i made a cash withdrawal but i cannot remember doing so!
     - someone is using my card to purchase flights to new york it's not me because i'm not going to new york, please can you cancel the card and refund the money?
     - i noticed that there is a withdrawal in the app that is not mine.
@@ -7822,7 +7822,7 @@ nlu:
     - the app says i made a cash withdrawal that i didn't make
     - help! i think someone has made a cash withdrawal with my card!
     - what do i do when a charge has been made that i did not make?
-    - i need your help immediately.  there is a 500£ cash withdrawal that i know nothing about.  i think my account has become compromised.
+    - i need your help immediately.  there is a 500Â£ cash withdrawal that i know nothing about.  i think my account has become compromised.
     - can you tell me what this cash withdrawal is?
     - i think someone might have a copy of my card because a 500 dollar withdrawal was made, and it wasn't me. can you please help?
     - someone has access to my card info.  i still have the card, but someone just withdrew cash.  how do i get this corrected/stopped?!

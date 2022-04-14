@@ -53,16 +53,16 @@ from pathlib import Path
 
 from dataprocessor import CoNLLParser
 
-dataset_name = "ATIS"
+dataset_name = "SNIPS"
 data_folder = os.path.join('datasets', dataset_name, 'train')
-dest_folder = Path(os.path.join('rasa-models', 'atis'))
+dest_folder = Path(os.path.join('rasa-models', dataset_name.lower()))
 dest_folder.mkdir(parents=True, exist_ok=True)
 dest_file = dest_folder.joinpath(f'{dataset_name.lower()}.yml')
 
 parser = CoNLLParser(data_folder)
 data = parser.to_rasa_data()
 
-with open(dest_file, 'w') as file:
+with open(dest_file, 'w', encoding='utf-8') as file:
     file.write(data)
 
 import os

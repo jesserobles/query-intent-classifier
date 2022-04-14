@@ -466,7 +466,7 @@ nlu:
     - what's the meaning of my life
     - what is the underlying purpose to life
     - what do you think about the meaning of life
-    - what is life’s meaning
+    - what is lifeâ€™s meaning
     - help me figure out the meaning of life
     - would you tell me the meaning of life, please
     - could you tell me the meaning of life, please
@@ -1189,7 +1189,7 @@ nlu:
     - answer me in french
     - please respond in latin from now on
     - talk to me in italian
-    - let’s chat using spanish
+    - letâ€™s chat using spanish
     - i need the language set to swahili
     - change the language you're using to american english
     - switch the language setting over to german
@@ -2721,11 +2721,11 @@ nlu:
     - i would like you to confirm my reservation for next saturday at 11 am
     - i need you to confirm my reservation for tomorrow at 3 pm
     - check to confirm my reservation for february 22 at noon
-    - i would like to try and confirm that i have a reservation at houlihan’s for mike
+    - i would like to try and confirm that i have a reservation at houlihanâ€™s for mike
     - i would like to try and confirm that i have a reservation at the seven dwarves for peter
     - i would like to try and confirm that i have a reservation at hu hot for paulie
     - i would like to try and confirm that i have a reservation at macaroni grill for saul
-    - i would like to try and confirm that i have a reservation at chili’s for melinda
+    - i would like to try and confirm that i have a reservation at chiliâ€™s for melinda
     - i would like to try and confirm that i have a reservation at macaroni grill for silva
     - i would like to try and confirm that i have a reservation at kelly's for moreno
     - i would like to try and confirm that i have a reservation at la palapa for bolding
@@ -3317,7 +3317,7 @@ nlu:
     - whats the timezone for modesto
     - what timezone is sacromento in
     - whats the timezone for san fransico
-    - if i’m in japan, what time zone am i in
+    - if iâ€™m in japan, what time zone am i in
     - tell me what time zone portugal uses
     - nigeria is in which time zone
     - the time zone for brazil is what
@@ -4385,8 +4385,8 @@ nlu:
     - who do i go to to find lost luggage
     - who do i complain to about my luggage not arriving at the airport
     - can you help me find my luggage it was lost on delta flight abc123 from houston
-    - i need my luggage that your airline lost it was flight abc123 and now it’s suddenly missing
-    - my luggage was on delta flight abc123 out of houston and now i can’t find it
+    - i need my luggage that your airline lost it was flight abc123 and now itâ€™s suddenly missing
+    - my luggage was on delta flight abc123 out of houston and now i canâ€™t find it
 - intent: repeat
   examples: |
     - i didn't hear you please repeat
@@ -4507,7 +4507,7 @@ nlu:
     - what is the gas mileage for the car that i drive
     - how many miles can i drive on 1 gallon of gas
     - how many miles does my car get per gallon
-    - what’s my gas mileage
+    - whatâ€™s my gas mileage
     - retrieve my current mpg on my car
     - tell me the gas mileage on my car
     - tell me my miles per gallon on my car
@@ -5498,10 +5498,10 @@ nlu:
     - that is false
     - negative
     - what you just said is wrong
-    - that’s actually wrong
-    - that’s not correct
-    - that’s incorrect
-    - are you sure i don’t think that’s correct
+    - thatâ€™s actually wrong
+    - thatâ€™s not correct
+    - thatâ€™s incorrect
+    - are you sure i donâ€™t think thatâ€™s correct
     - that'd be a no
     - nada
     - the answer is no
@@ -6013,7 +6013,7 @@ nlu:
     - what is 63 percent of 145
     - can you calculate 18 divided by 45
     - what is the square root of 104
-    - what’s the answer to 5-6=
+    - whatâ€™s the answer to 5-6=
     - what is the sum of 8 + 3
     - please provide the square root of 36
     - what does 6 x 1 equal
@@ -9854,8 +9854,8 @@ nlu:
     - thanks, bye
     - i have to get going
     - talk to you later!
-    - i’ll be leaving now
-    - i’m leaving-goodbye!
+    - iâ€™ll be leaving now
+    - iâ€™m leaving-goodbye!
     - thanks for talking to me
     - it was really nice to be able to chat with you
     - it was good to talk to you today
@@ -10446,7 +10446,7 @@ nlu:
     - what ingredients do i need to bake a cake
     - i want to cook a quick breakfast what ingredients do i need
     - what ingredients are needed for shrimp cocktail
-    - i’m making spaghetti what ingredients do i need
+    - iâ€™m making spaghetti what ingredients do i need
     - i want to make a meat stew what ingredients do i need
     - what goes in broccoli cheddar soup
     - show me the recipe for broccoli cheddar soup
@@ -12968,7 +12968,7 @@ nlu:
     - can you text arthur and tell them im almost there
     - can you text kayla and tell them im running late
     - text chris and ask what time he will be home
-    - send a text and tell chris i’m not working today
+    - send a text and tell chris iâ€™m not working today
     - text message chris and say i love you
     - send chris a text message that says stop for milk on your way home
     - send a text message to chris and ask what he wants to eat for dinner
@@ -13366,10 +13366,10 @@ nlu:
 - intent: play_music
   examples: |
     - can i get some music by three six mafia in here
-    - what does x’s music sound like
+    - what does xâ€™s music sound like
     - may i hear some music by fleet foxes
     - can i hear some music by cloud control
-    - can x’s music be played
+    - can xâ€™s music be played
     - play some music for me
     - i'd like to hear my workout playlist
     - put on my jam session playlist please
@@ -14136,10 +14136,10 @@ nlu:
     - tell me a joke about cars
     - can you tell me something funny
     - do you know any good jokes about lawyers
-    - what’s your favorite funny joke
+    - whatâ€™s your favorite funny joke
     - make me laugh with a funny joke
     - what funny joke do you know
-    - i want to hear a joke that’s funny
+    - i want to hear a joke thatâ€™s funny
     - tell me a dirty joke
     - tell me a non-offensive joke
     - i would like to hear a funny joke
