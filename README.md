@@ -82,3 +82,20 @@ data = parser.to_rasa_data()
 with open(dest_file, 'w', encoding='utf-8') as file:
     file.write(data)
 ```
+
+```python
+import os
+from rasa.core.agent import Agent
+from rasa.core.channels.channel import UserMessage
+
+model = 'atis'
+model_path = model_path = os.path.join('rasa-models', 'models', f'{model}.tar.gz')
+
+agent = Agent()
+agent.load_model(model_path=model_path)
+
+text = "i would like to find a flight from charlotte to las vegas that makes a stop in st. louis"
+message = UserMessage(text)
+parsed = agent.processor._parse_message_with_graph(message)
+
+```

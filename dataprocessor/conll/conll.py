@@ -6,7 +6,7 @@ import os
 import itertools
 import logging
 from pathlib import Path
-from typing import Union, List
+from typing import Union, List, Dict
 
 from datasets import Dataset, DatasetDict, ClassLabel, Sequence
 import pandas as pd
@@ -158,3 +158,202 @@ class CoNLLParser(BaseParser):
             annotated_token = f"[{' '.join(current_entity_tokens)}]({current_entity_tag})"
             annotated_tokens.append(annotated_token)
         return ' '.join(annotated_tokens)
+    
+    @staticmethod
+    def rasa_to_IOB(parsed):
+        spans = parsed['text_tokens']
+        labels = ['O']*len(spans)
+        for entity in parsed['entities']:
+            start = entity['start']
+            end = entity['end']
+            ent = entity["entity"]
+            first_found = False
+            for ix, (s, e) in enumerate(spans):
+                prefix = "I" if first_found else "B"
+                if s == start or e == end: # This will just pick up the appropriate token
+                    if e < end: # This is the start token span, and the entity spills over it
+                        first_found = True
+                    label = f'{prefix}-{ent}'
+                    labels[ix] = label
+        return labels
+
+"""
+fields = [
+    "text",
+    "intent.name",
+    "entities"
+]
+{
+ "text": "i would like to find a flight from charlotte to las vegas that makes a stop in st. louis",
+ "intent": {
+  "name": "atis_flight",
+  "confidence": 1.0
+ },
+ "entities": [
+  {
+   "entity": "fromloc.city_name",
+   "start": 35,
+   "end": 44,
+   "confidence_entity": 0.9999704360961914,
+   "value": "charlotte",
+   "extractor": "DIETClassifier"
+  },
+  {
+   "entity": "toloc.city_name",
+   "start": 48,
+   "end": 57,
+   "confidence_entity": 0.999308705329895,
+   "value": "las vegas",
+   "extractor": "DIETClassifier"
+  },
+  {
+   "entity": "stoploc.city_name",
+   "start": 79,
+   "end": 81,
+   "confidence_entity": 0.9966257810592651,
+   "value": "st",
+   "extractor": "DIETClassifier"
+  },
+  {
+   "entity": "stoploc.city_name",
+   "start": 83,
+   "end": 88,
+   "confidence_entity": 0.9859499335289001,
+   "value": "louis",
+   "extractor": "DIETClassifier"
+  }
+ ],
+ "text_tokens": [
+  [
+   0,
+   1
+  ],
+  [
+   2,
+   7
+  ],
+  [
+   8,
+   12
+  ],
+  [
+   13,
+   15
+  ],
+  [
+   16,
+   20
+  ],
+  [
+   21,
+   22
+  ],
+  [
+   23,
+   29
+  ],
+  [
+   30,
+   34
+  ],
+  [
+   35,
+   44
+  ],
+  [
+   45,
+   47
+  ],
+  [
+   48,
+   51
+  ],
+  [
+   52,
+   57
+  ],
+  [
+   58,
+   62
+  ],
+  [
+   63,
+   68
+  ],
+  [
+   69,
+   70
+  ],
+  [
+   71,
+   75
+  ],
+  [
+   76,
+   78
+  ],
+  [
+   79,
+   81
+  ],
+  [
+   83,
+   88
+  ]
+ ],
+ "intent_ranking": [
+  {
+   "name": "atis_flight",
+   "confidence": 1.0
+  },
+  {
+   "name": "atis_flight+atis_airfare",
+   "confidence": 1.590412373596495e-22
+  },
+  {
+   "name": "atis_airline",
+   "confidence": 9.077638899810575e-23
+  },
+  {
+   "name": "atis_quantity",
+   "confidence": 6.554135341792252e-23
+  },
+  {
+   "name": "atis_ground_fare",
+   "confidence": 4.008480569555323e-23
+  },
+  {
+   "name": "atis_abbreviation",
+   "confidence": 3.9862173370881756e-23
+  },
+  {
+   "name": "atis_flight_no",
+   "confidence": 3.805358668336137e-23
+  },
+  {
+   "name": "atis_capacity",
+   "confidence": 3.243134030197139e-23
+  },
+  {
+   "name": "atis_airport",
+   "confidence": 3.0513414337543754e-23
+  },
+  {
+   "name": "atis_ground_service",
+   "confidence": 2.9761579407770195e-23
+  }
+ ],
+ "response_selector": {
+  "all_retrieval_intents": [],
+  "default": {
+   "response": {
+    "responses": null,
+    "confidence": 0.0,
+    "intent_response_key": null,
+    "utter_action": "utter_None"
+   },
+   "ranking": []
+  }
+ }
+}
+"""
