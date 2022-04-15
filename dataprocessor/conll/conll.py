@@ -160,8 +160,20 @@ class CoNLLParser(BaseParser):
         return ' '.join(annotated_tokens)
     
     @staticmethod
+    def get_spans(text):
+        tokens = text.split()
+        spans = []
+        ix = 0
+        for token in tokens:
+            start = ix
+            end = start + len(token)
+            ix = end + 1
+            spans.append((start, end))
+        return spans
+
+    @staticmethod
     def rasa_to_IOB(parsed):
-        spans = parsed['text_tokens']
+        spans = CoNLLParser.get_spans(parsed['text'])
         labels = ['O']*len(spans)
         for entity in parsed['entities']:
             start = entity['start']

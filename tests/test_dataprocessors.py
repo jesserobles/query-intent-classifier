@@ -59,26 +59,20 @@ class TestDataProcessors(unittest.TestCase):
     
     def test_rasa_to_IOB(self):
         data_path = os.path.join("datasets", "atis", "test")
-        text = "i would like to find a flight from charlotte to las vegas that makes a stop in st. louis"
         with open(os.path.join(data_path, "test.json"), "r") as file:
             payload = json.load(file)['rasa_nlu_data']['common_examples']
         example = payload[0]
-        example['text_tokens'] = get_spans(text)
         labels = CoNLLParser.rasa_to_IOB(example)
         file = open(os.path.join(data_path, "seq.out"))
         expected_labels = next(file).split()
         self.assertEqual(labels, expected_labels)
 
-        text = 'on april first i need a ticket from tacoma to san jose departing before 7 am'
         example = payload[1]
-        example['text_tokens'] = get_spans(text)
         labels = CoNLLParser.rasa_to_IOB(example)
         expected_labels = next(file).split()
         self.assertEqual(labels, expected_labels)
 
-        text = 'list flights from charlotte on saturday afternoon'
         example = payload[640]
-        example['text_tokens'] = get_spans(text)
         labels = CoNLLParser.rasa_to_IOB(example)
         file.close()
         expected_labels = open(os.path.join(data_path, "seq.out")).read().split('\n')[640].split()
