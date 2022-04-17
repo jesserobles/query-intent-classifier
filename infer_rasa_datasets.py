@@ -63,3 +63,4 @@ with logging_redirect_tqdm():
             file.write("\n".join(all_intents))
 
 # Now run on the json dataset (benchmarking_data)
+model = "benchmarking_data"
