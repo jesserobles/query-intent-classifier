@@ -1,1 +1,1 @@
-from .json_data import JsonParser
+from .json import JsonParser

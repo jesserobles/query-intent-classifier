@@ -62,3 +62,4 @@ with logging_redirect_tqdm():
         with open(os.path.join("results", f"{model}.label"), "w") as file:
             file.write("\n".join(all_intents))
 
+# Now run on the json dataset (benchmarking_data)
