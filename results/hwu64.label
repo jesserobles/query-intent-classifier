@@ -249,7 +249,7 @@ email_sendemail
 email_sendemail
 email_sendemail
 email_sendemail
-email_sendemail
+nlu_fallback
 email_addcontact
 general_affirm
 general_affirm
@@ -390,7 +390,7 @@ general_praise
 general_praise
 general_praise
 general_praise
-general_praise
+general_affirm
 general_praise
 general_praise
 general_praise
@@ -773,7 +773,7 @@ qa_currency
 qa_currency
 qa_currency
 qa_currency
-qa_stock
+nlu_fallback
 qa_currency
 qa_currency
 qa_currency
@@ -813,7 +813,7 @@ email_querycontact
 qa_factoid
 calendar_query
 transport_query
-nlu_fallback
+qa_factoid
 nlu_fallback
 qa_factoid
 qa_factoid
@@ -925,7 +925,7 @@ social_post
 social_post
 social_post
 social_query
-news_query
+nlu_fallback
 social_query
 social_query
 social_query
