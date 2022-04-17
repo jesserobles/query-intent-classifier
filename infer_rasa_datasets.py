@@ -25,6 +25,7 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 models = [
+    'benchmarking_data',
     'atis',
     'banking77',
     'clinc150',
