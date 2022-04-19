@@ -25,7 +25,7 @@ class JsonParser(CoNLLParser):
         location = location or self.location
         if not location:
             return
-        for file in location.iterdir():
+        for file in location.glob('*.json'):
             intent = os.path.splitext(os.path.basename(file))[0]
             with open(file, encoding="utf-8") as f:
                 for record in json.load(f)[intent]:
