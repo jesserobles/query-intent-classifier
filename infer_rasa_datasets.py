@@ -35,12 +35,12 @@ models = [
 with logging_redirect_tqdm():
     for model in models:
         model_path = model_path = os.path.join('rasa-models', 'models', f'{model}.tar.gz')
-
+        dataset_name = model if model == 'benchmarking_data' else model.upper()
         agent = Agent()
         logger.info(f"Loading model {model}")
         agent.load_model(model_path=model_path)
         logger.info("Finished loading model.")
-        data_path = os.path.join("datasets", f"{model.upper()}", "valid")
+        data_path = os.path.join("datasets", f"{dataset_name}", "valid")
         logger.info("Loading data")
         with open(os.path.join(data_path, "seq.in"), "r", encoding="utf-8") as file:
             texts = file.read().strip().split('\n')
