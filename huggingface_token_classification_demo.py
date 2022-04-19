@@ -66,7 +66,7 @@ data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 model = AutoModelForTokenClassification.from_pretrained("distilbert-base-uncased", num_labels=len(label_list))
 
 training_args = TrainingArguments(
-    output_dir=os.path.join("huggingface-models", "results", dataset_name)
+    output_dir=os.path.join("huggingface-models", "results", dataset_name),
     evaluation_strategy="epoch",
     learning_rate=2e-5,
     per_device_train_batch_size=16,
