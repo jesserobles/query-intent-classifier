@@ -29,12 +29,12 @@ df = pd.DataFrame({
 }).sample(frac=1).reset_index(drop=True)
 
 # In the first step we will split the data in training and remaining dataset
-X_train, X_rem, y_train, y_rem = train_test_split(df,df, train_size=0.8)
+X_train, X_rem, y_train, y_rem = train_test_split(df,df['label'], train_size=0.8, stratify=df['label'])
 
 # Now since we want the valid and test size to be equal (10% each of overall data). 
 # we have to define valid_size=0.5 (that is 50% of remaining data)
 test_size = 0.5
-X_valid, X_test, y_valid, y_test = train_test_split(X_rem,y_rem, test_size=0.5)
+X_valid, X_test, y_valid, y_test = train_test_split(X_rem,y_rem, test_size=0.5, stratify=X_rem['label'])
 
 # Training set
 with open(dest_train_data_folder.joinpath("seq.in"), "w", encoding='utf-8') as file:
