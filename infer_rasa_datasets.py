@@ -40,7 +40,7 @@ with logging_redirect_tqdm():
         logger.info(f"Loading model {model}")
         agent.load_model(model_path=model_path)
         logger.info("Finished loading model.")
-        data_path = os.path.join("datasets", f"{model.upper()}", "test")
+        data_path = os.path.join("datasets", f"{model.upper()}", "valid")
         logger.info("Loading data")
         with open(os.path.join(data_path, "seq.in"), "r", encoding="utf-8") as file:
             texts = file.read().strip().split('\n')
