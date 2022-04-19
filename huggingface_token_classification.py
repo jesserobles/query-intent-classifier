@@ -53,37 +53,38 @@ def compute_metrics(p):
 
 datasets = ["ATIS", "benchmarking_data", "SNIPS"]
 
-dataset_name = datasets[0]
-dataset_combiner = DatasetCombiner(os.path.join("datasets", dataset_name))
-dataset = dataset_combiner.dataset
-label_list = dataset["train"].features[f"ner_tags"].feature.names
+# dataset_name = datasets[0]
+for dataset_name in datasets:
+    dataset_combiner = DatasetCombiner(os.path.join("datasets", dataset_name))
+    dataset = dataset_combiner.dataset
+    label_list = dataset["train"].features[f"ner_tags"].feature.names
 
-tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
-tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True, fn_kwargs={"tokenizer": tokenizer})
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+    tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True, fn_kwargs={"tokenizer": tokenizer})
 
-data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
+    data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 
-model = AutoModelForTokenClassification.from_pretrained("distilbert-base-uncased", num_labels=len(label_list))
+    model = AutoModelForTokenClassification.from_pretrained("distilbert-base-uncased", num_labels=len(label_list))
 
-training_args = TrainingArguments(
-    output_dir=os.path.join("huggingface-models", "results", dataset_name),
-    evaluation_strategy="epoch",
-    learning_rate=2e-5,
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=16,
-    num_train_epochs=10,
-    weight_decay=0.01,
-)
+    training_args = TrainingArguments(
+        output_dir=os.path.join("huggingface-models", "results", dataset_name),
+        evaluation_strategy="epoch",
+        learning_rate=2e-5,
+        per_device_train_batch_size=16,
+        per_device_eval_batch_size=16,
+        num_train_epochs=10,
+        weight_decay=0.01,
+    )
 
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_datasets["train"],
-    eval_dataset=tokenized_datasets["test"],
-    tokenizer=tokenizer,
-    data_collator=data_collator,
-    compute_metrics=compute_metrics
-)
-trainer.train()
-trainer.evaluate()
-trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-ner.model'))
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_datasets["train"],
+        eval_dataset=tokenized_datasets["test"],
+        tokenizer=tokenizer,
+        data_collator=data_collator,
+        compute_metrics=compute_metrics
+    )
+    trainer.train()
+    trainer.evaluate()
+    trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-ner.model'))
