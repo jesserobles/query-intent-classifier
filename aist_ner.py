@@ -91,4 +91,4 @@ trainer = Trainer(
 
 trainer.train()
 trainer.evaluate()
-trainer.save_model('atis-ner.model')
+trainer.save_model(os.path.join('huggingface-models', 'atis-ner.model'))

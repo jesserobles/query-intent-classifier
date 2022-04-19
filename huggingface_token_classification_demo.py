@@ -51,7 +51,10 @@ def compute_metrics(p):
         "accuracy": results["overall_accuracy"],
     }
 
-dataset_combiner = DatasetCombiner(os.path.join("datasets", "ATIS"))
+datasets = ["ATIS", "benchmarking_data", "SNIPS"]
+
+dataset_name = datasets[0]
+dataset_combiner = DatasetCombiner(os.path.join("datasets", dataset_name))
 dataset = dataset_combiner.dataset
 label_list = dataset["train"].features[f"ner_tags"].feature.names
 
@@ -63,7 +66,7 @@ data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 model = AutoModelForTokenClassification.from_pretrained("distilbert-base-uncased", num_labels=len(label_list))
 
 training_args = TrainingArguments(
-    output_dir="./results",
+    output_dir=os.path.join("huggingface-models", "results", dataset_name)
     evaluation_strategy="epoch",
     learning_rate=2e-5,
     per_device_train_batch_size=16,
@@ -83,3 +86,4 @@ trainer = Trainer(
 )
 trainer.train()
 trainer.evaluate()
+trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-ner.model'))
