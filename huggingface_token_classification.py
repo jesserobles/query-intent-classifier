@@ -51,9 +51,8 @@ def compute_metrics(p):
         "accuracy": results["overall_accuracy"],
     }
 
-datasets = ["ATIS", "benchmarking_data", "SNIPS"]
+datasets = ["ATIS", "BENCHMARKING_DATA", "SNIPS"]
 
-# dataset_name = datasets[0]
 for dataset_name in datasets:
     dataset_combiner = DatasetCombiner(os.path.join("datasets", dataset_name))
     dataset = dataset_combiner.dataset
