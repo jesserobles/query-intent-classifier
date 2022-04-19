@@ -50,7 +50,11 @@ class JsonParser(CoNLLParser):
         so that it adds missing data.
         """
         labels = sorted(set(lbl for line in labels_seq for lbl in line.split()),key=lambda x: x.split('-')[-1], reverse=True)
-        labels.remove('O')
+        try:
+            labels.remove('O')
+        except ValueError:
+            print(labels)
+            pass
         cleaned_labels = ['O'] + labels
         label_encoding = {c: ix for ix, c in enumerate(cleaned_labels)}
         # label_encoding = self.seq_label_encoder.fit_transform(cleaned_labels)
