@@ -1,13 +1,12 @@
+import os
+
 from datasets import Dataset, load_dataset, load_metric
 from datasets.dataset_dict import DatasetDict
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 import numpy as np
-import torch
 
 from dataprocessor.conll.conll import CoNLLParser
 
-
-# device = torch.device("cpu")
 
 metric = load_metric("accuracy")
 
@@ -16,13 +15,14 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
-train = CoNLLParser('datasets/ATIS/train')
-test = CoNLLParser('datasets/ATIS/test')
+dataset_name = "ATIS"
+
+train = CoNLLParser(os.path.join('datasets', dataset_name, 'train'))
+test = CoNLLParser(os.path.join('datasets', dataset_name, 'test'))
 train_dataset = Dataset.from_pandas(train.bert_intent_data())
 test_dataset = Dataset.from_pandas(train.bert_intent_data())
 
 dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
-# dataset = load_dataset("yelp_review_full")
 
 tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
 
@@ -45,4 +45,4 @@ trainer = Trainer(
 )
 trainer.train()
 trainer.evaluate()
-trainer.save_model('atis-intent.model')
+trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-clf.model'))
