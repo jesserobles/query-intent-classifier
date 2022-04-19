@@ -1,3 +1,4 @@
+huggingface-models/*
 venvs/huggingface/
 venvs/rasa/
 datasets/
