@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dataprocessor import JsonParser
 
-dataset_name = "benchmarking_data"
+dataset_name = "BENCHMARKING_DATA"
 train_data_folder = os.path.join('datasets', dataset_name, 'train')
 test_data_folder = os.path.join('datasets', dataset_name, 'test')
 valid_data_folder = os.path.join('datasets', dataset_name, 'valid')
