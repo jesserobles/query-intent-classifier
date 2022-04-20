@@ -2,7 +2,7 @@ import os
 
 from datasets import Dataset, load_dataset, load_metric
 from datasets.dataset_dict import DatasetDict
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, Trainer, TrainingArguments
 import numpy as np
 
 from dataprocessor.conll.conll import CoNLLParser
@@ -15,34 +15,45 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
-dataset_name = "ATIS"
+sets = ["ATIS", "BANKING77", "benchmarking_data", "CLINC150", "HWU64", "SNIPS"]
 
-train = CoNLLParser(os.path.join('datasets', dataset_name, 'train'))
-test = CoNLLParser(os.path.join('datasets', dataset_name, 'test'))
-train_dataset = Dataset.from_pandas(train.bert_intent_data())
-test_dataset = Dataset.from_pandas(train.bert_intent_data())
+for dataset_name in sets:
+    train = CoNLLParser(os.path.join('datasets', dataset_name, 'train'))
+    test = CoNLLParser(os.path.join('datasets', dataset_name, 'test'))
+    train_dataset = Dataset.from_pandas(train.bert_intent_data())
+    test_dataset = Dataset.from_pandas(train.bert_intent_data())
 
-dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
+    dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
 
-tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
-def tokenize_function(examples):
-    return tokenizer(examples["text"], padding="max_length", truncation=True)
+    def tokenize_function(examples):
+        return tokenizer(examples["text"], padding="max_length", truncation=True)
 
 
-tokenized_datasets = dataset.map(tokenize_function, batched=True)
+    tokenized_datasets = dataset.map(tokenize_function, batched=True)
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
-model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=len(train.intent_label_encoder.classes_))
+    model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=len(train.intent_label_encoder.classes_))
 
-training_args = TrainingArguments(output_dir=os.path.join("huggingface-models", "results", dataset_name))
+    training_args = TrainingArguments(
+        output_dir=os.path.join("huggingface-models", "results", dataset_name),
+        learning_rate=2e-5,
+        per_device_train_batch_size=16,
+        per_device_eval_batch_size=16,
+        num_train_epochs=5,
+        weight_decay=0.01,
+    )
 
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_datasets['train'],
-    eval_dataset=tokenized_datasets['test'],
-    compute_metrics=compute_metrics,
-)
-trainer.train()
-trainer.evaluate()
-trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-clf.model'))
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_datasets['train'],
+        eval_dataset=tokenized_datasets['test'],
+        compute_metrics=compute_metrics,
+        tokenizer=tokenizer,
+        data_collator=data_collator,
+    )
+    trainer.train()
+    trainer.evaluate()
+    trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-clf.model'))
