@@ -24,7 +24,7 @@ test_dataset = Dataset.from_pandas(train.bert_intent_data())
 
 dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
 
-tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
 def tokenize_function(examples):
     return tokenizer(examples["text"], padding="max_length", truncation=True)
@@ -32,9 +32,9 @@ def tokenize_function(examples):
 
 tokenized_datasets = dataset.map(tokenize_function, batched=True)
 
-model = AutoModelForSequenceClassification.from_pretrained("bert-base-cased", num_labels=len(train.intent_label_encoder.classes_))
+model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=len(train.intent_label_encoder.classes_))
 
-training_args = TrainingArguments(output_dir="test_trainer")
+training_args = TrainingArguments(output_dir=os.path.join("huggingface-models", "results", dataset_name))
 
 trainer = Trainer(
     model=model,
