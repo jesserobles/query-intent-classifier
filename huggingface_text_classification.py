@@ -32,7 +32,7 @@ def tokenize_function(examples):
 
 tokenized_datasets = dataset.map(tokenize_function, batched=True)
 
-model = AutoModelForSequenceClassification.from_pretrained("bert-base-cased", num_labels=len(train.label_encoder.classes_))
+model = AutoModelForSequenceClassification.from_pretrained("bert-base-cased", num_labels=len(train.intent_label_encoder.classes_))
 
 training_args = TrainingArguments(output_dir="test_trainer")
 
