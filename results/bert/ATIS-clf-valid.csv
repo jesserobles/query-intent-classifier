@@ -1,7 +1,7 @@
 metric,value
-eval_loss,0.5937973856925964
-eval_accuracy,0.894
-eval_runtime,4.3556
-eval_samples_per_second,114.796
-eval_steps_per_second,7.347
-epoch,5.0
+eval_loss,0.5717846155166626
+eval_accuracy,0.93
+eval_runtime,4.1803
+eval_samples_per_second,119.609
+eval_steps_per_second,7.655
+epoch,100.0
