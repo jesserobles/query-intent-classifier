@@ -17,10 +17,10 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
-sets = ["ATIS", "BANKING77", "benchmarking_data", "CLINC150", ]
-sets = ["HWU64", "SNIPS"]
+sets = ["ATIS", "BANKING77", "benchmarking_data", "CLINC150", "HWU64", "SNIPS"]
 
 for dataset_name in sets:
+    print(f"Training on dataset {dataset_name}")
     dataset_combiner = DatasetCombiner(os.path.join('datasets', dataset_name), mode="intent")
 
     valid_dataset = CoNLLParser(os.path.join('datasets', dataset_name, 'valid'), intent_label_encoder=dataset_combiner.label_encoder).bert_intent_data()

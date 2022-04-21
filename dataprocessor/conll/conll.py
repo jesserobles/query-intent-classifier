@@ -35,7 +35,7 @@ class DatasetCombiner(BaseParser):
         for folder in self.FOLDERS:
             parser = CoNLLParser(self.location.joinpath(folder), self.label_encoder)
             all_labels.extend(parser.data['label'])
-            all_ner_labels.extend(parser.data['raw_ner_labels'])
+            all_ner_labels.extend(parser.data.get('raw_ner_labels', ''))
             self.datasets[folder] = parser
         # Fit label encoder on entire dataset to ensure consistency
         self.label_encoder.fit(all_labels)
@@ -88,6 +88,8 @@ class CoNLLParser(BaseParser):
     
     def reset_labels(self, ner_label_encoder: LabelEncoder):
         tags = []
+        if not 'ner_tags_names' in self.data:
+            return
         for lbl in self.data['ner_tags_names']:
             try:
                 encoded = ner_label_encoder.transform(lbl).tolist()

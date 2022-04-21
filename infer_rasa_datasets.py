@@ -62,3 +62,4 @@ with logging_redirect_tqdm():
 
         with open(os.path.join("results", "rasa", f"{model}.label"), "w") as file:
             file.write("\n".join(all_intents))
+# https://rasa.com/blog/evaluating-rasa-nlu-models-in-jupyter/
