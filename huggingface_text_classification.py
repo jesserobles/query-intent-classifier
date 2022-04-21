@@ -4,8 +4,10 @@ from datasets import Dataset, load_dataset, load_metric
 from datasets.dataset_dict import DatasetDict
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, Trainer, TrainingArguments
 import numpy as np
+import pandas as pd
+from sklearn.metrics import classification_report
 
-from dataprocessor.conll.conll import CoNLLParser
+from dataprocessor.conll.conll import CoNLLParser, DatasetCombiner
 
 
 metric = load_metric("accuracy")
@@ -18,12 +20,11 @@ def compute_metrics(eval_pred):
 sets = ["ATIS", "BANKING77", "benchmarking_data", "CLINC150", "HWU64", "SNIPS"]
 
 for dataset_name in sets:
-    train = CoNLLParser(os.path.join('datasets', dataset_name, 'train'))
-    test = CoNLLParser(os.path.join('datasets', dataset_name, 'test'))
-    train_dataset = Dataset.from_pandas(train.bert_intent_data())
-    test_dataset = Dataset.from_pandas(train.bert_intent_data())
+    dataset_combiner = DatasetCombiner(os.path.join('datasets', dataset_name), mode="intent")
 
-    dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
+    valid_dataset = CoNLLParser(os.path.join('datasets', dataset_name, 'valid'), intent_label_encoder=dataset_combiner.label_encoder).bert_intent_data()
+
+    dataset = dataset_combiner.dataset
 
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
@@ -34,7 +35,7 @@ for dataset_name in sets:
     tokenized_datasets = dataset.map(tokenize_function, batched=True)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
-    model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=len(train.intent_label_encoder.classes_))
+    model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=len(dataset_combiner.label_encoder.classes_))
 
     training_args = TrainingArguments(
         output_dir=os.path.join("huggingface-models", "results", dataset_name),
@@ -55,5 +56,17 @@ for dataset_name in sets:
         data_collator=data_collator,
     )
     trainer.train()
-    trainer.evaluate()
+    test_metrics = trainer.evaluate()
+        
+    ev_df = pd.DataFrame({"metric": k, "value": v} for k, v in test_metrics.items())
+    ev_df.to_csv(os.path.join("results", "bert", f"{dataset_name}-clf-test.csv"), index=False)
+
+    # Save the model
     trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-clf.model'))
+
+    # Evaluate on the validaton dataset
+    tokenized_validate_dataset = valid_dataset.map(tokenize_function, batched=True)
+    valid_metrics = trainer.evaluate(tokenized_validate_dataset)
+
+    ev_df = pd.DataFrame({"metric": k, "value": v} for k, v in valid_metrics.items())
+    ev_df.to_csv(os.path.join("results", "bert", f"{dataset_name}-clf-valid.csv"), index=False)

@@ -1,0 +1,10 @@
+metric,value
+eval_loss,5.264071464538574
+eval_precision,0.5346399270738378
+eval_recall,0.3889257294429708
+eval_f1,0.45028790786948175
+eval_accuracy,0.7064543404735062
+eval_runtime,0.5296
+eval_samples_per_second,1321.864
+eval_steps_per_second,83.089
+epoch,100.0

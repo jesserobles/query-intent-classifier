@@ -2,9 +2,10 @@ import os
 
 from datasets import load_dataset, load_metric
 import numpy as np
+import pandas as pd
 from transformers import AutoModelForTokenClassification, AutoTokenizer, DataCollatorForTokenClassification, Trainer, TrainingArguments
 
-from dataprocessor.conll import DatasetCombiner
+from dataprocessor.conll import CoNLLParser, DatasetCombiner
 
 def tokenize_and_align_labels(examples, tokenizer, task="ner", label_all_tokens=True):
     tokenized_inputs = tokenizer(examples["tokens"], truncation=True, is_split_into_words=True)
@@ -52,7 +53,6 @@ def compute_metrics(p):
     }
 
 datasets = ["ATIS", "benchmarking_data", "SNIPS"]
-
 for dataset_name in datasets:
     dataset_combiner = DatasetCombiner(os.path.join("datasets", dataset_name))
     dataset = dataset_combiner.dataset
@@ -71,7 +71,7 @@ for dataset_name in datasets:
         learning_rate=2e-5,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
-        num_train_epochs=10,
+        num_train_epochs=100,
         weight_decay=0.01,
     )
 
@@ -82,8 +82,21 @@ for dataset_name in datasets:
         eval_dataset=tokenized_datasets["test"],
         tokenizer=tokenizer,
         data_collator=data_collator,
-        compute_metrics=compute_metrics
+        compute_metrics=compute_metrics,
+        
     )
     trainer.train()
-    trainer.evaluate()
+    test_metrics = trainer.evaluate()
+    ev_df = pd.DataFrame({"metric": k, "value": v} for k, v in test_metrics.items())
+    ev_df.to_csv(os.path.join("results", "bert", f"{dataset_name}-ner-test.csv"), index=False)
+
+    # Save the model
     trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-ner.model'))
+    validate_dataset = CoNLLParser(os.path.join("datasets", dataset_name, "valid")).to_bert_ner_data()
+
+    # Evaluate on the validaton dataset
+    tokenized_validate_dataset = validate_dataset.map(tokenize_and_align_labels, batched=True, fn_kwargs={"tokenizer": tokenizer})
+    valid_metrics = trainer.evaluate(tokenized_validate_dataset)
+
+    ev_df = pd.DataFrame({"metric": k, "value": v} for k, v in valid_metrics.items())
+    ev_df.to_csv(os.path.join("results", "bert", f"{dataset_name}-ner-valid.csv"), index=False)

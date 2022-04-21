@@ -1,6 +1,7 @@
 """
 This module contains utilities for parsing the datasets that are in conll format for this project
 """
+from cProfile import label
 from collections import defaultdict
 import os
 import itertools
@@ -20,14 +21,23 @@ class DatasetCombiner(BaseParser):
     Class for parsing a text line and its associated CONLL information.
     """
     FOLDERS = {'train', 'test'}
-    def __init__(self, location: Union[Path, str]) -> None:
+    def __init__(self, location: Union[Path, str], mode:str="ner") -> None:
         super().__init__(location)
         self.payload = {}
         self.datasets = {}
+        self.label_encoder = LabelEncoder()
+        func = "to_bert_ner_data"
+        if mode != "ner":
+            func = "bert_intent_data"
+        all_labels = []
         for folder in self.FOLDERS:
-            parser = CoNLLParser(self.location.joinpath(folder))
+            parser = CoNLLParser(self.location.joinpath(folder), self.label_encoder)
+            all_labels.extend(parser.data['label'])
             self.datasets[folder] = parser
-            self.payload[folder] = parser.to_bert_ner_data()
+        # Fit label encoder on entire dataset
+        self.label_encoder.fit(all_labels)
+        for folder in self.FOLDERS:
+            self.payload[folder] = getattr(parser, func)()
         self.dataset = DatasetDict(self.payload)
 
 
@@ -37,11 +47,10 @@ class CoNLLParser(BaseParser):
     for both HuggingFace and Rasa.
     """
     EXPECTED_FILES = {'label', 'seq.in', 'seq.out'}
-    def __init__(self, location: Union[Path, str]) -> None:
+    def __init__(self, location: Union[Path, str], intent_label_encoder: LabelEncoder=None) -> None:
         super().__init__(location)
-        self.seq_label_encoder = LabelEncoder()
         self.data = self.load()
-        self.intent_label_encoder = LabelEncoder().fit(self.data['label'])
+        self.intent_label_encoder = intent_label_encoder
         
     def load(self, location: Path=None) -> dict:
         payload = {}
@@ -96,7 +105,7 @@ class CoNLLParser(BaseParser):
         return  dataset
 
     def bert_intent_data(self):
-        return pd.DataFrame([{"label": self.intent_label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])])
+        return Dataset.from_pandas(pd.DataFrame([{"label": self.intent_label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])]))
 
     def to_rasa_data(self) -> str:
         grouped_intents = defaultdict(list)
