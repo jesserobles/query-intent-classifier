@@ -26,17 +26,23 @@ class DatasetCombiner(BaseParser):
         self.payload = {}
         self.datasets = {}
         self.label_encoder = LabelEncoder()
+        self.ner_label_encoder = LabelEncoder()
         func = "to_bert_ner_data"
         if mode != "ner":
             func = "bert_intent_data"
         all_labels = []
+        all_ner_labels = []
         for folder in self.FOLDERS:
             parser = CoNLLParser(self.location.joinpath(folder), self.label_encoder)
             all_labels.extend(parser.data['label'])
+            all_ner_labels.extend(parser.data['raw_ner_labels'])
             self.datasets[folder] = parser
-        # Fit label encoder on entire dataset
+        # Fit label encoder on entire dataset to ensure consistency
         self.label_encoder.fit(all_labels)
+        self.ner_label_encoder.fit(all_ner_labels)
         for folder in self.FOLDERS:
+            parser = self.datasets[folder]
+            parser.reset_labels(self.ner_label_encoder)
             self.payload[folder] = getattr(parser, func)()
         self.dataset = DatasetDict(self.payload)
 
@@ -68,6 +74,7 @@ class CoNLLParser(BaseParser):
         if 'seq.out' in payload:
             payload['ner_labels'] = self.generate_labels(payload['seq.out'])
             payload['ner_tags_names'] = [line.split() for line in payload['seq.out']]
+            payload['raw_ner_labels'] = [lbl for line in payload['seq.out'] for lbl in line.split()]
             payload['ner_tags'] = [[payload['ner_labels']['label_encoding'][tag] for tag in line.split()] for line in payload['seq.out']]
             if len(payload['label']) != len(payload['tokens']) != len(payload['ner_tags']):
                 raise ValueError(f"Mismatched lengths of tokens and ner_tags: label={len(payload['label'])}, tokens={len(payload['tokens'])}, ner_tags={payload['ner_tags']}")
@@ -79,6 +86,20 @@ class CoNLLParser(BaseParser):
             raise ValueError(f"Mismatched lengths of tokens and ner_tags: label={len(payload['label'])}, tokens={len(payload['tokens'])}, ner_tags={payload['ner_tags']}")
         return payload
     
+    def reset_labels(self, ner_label_encoder: LabelEncoder):
+        tags = []
+        for lbl in self.data['ner_tags_names']:
+            try:
+                encoded = ner_label_encoder.transform(lbl).tolist()
+            except ValueError:
+                lbl = [l if l in ner_label_encoder.classes_ else 'O' for l in lbl]
+                encoded = ner_label_encoder.transform(lbl).tolist()
+            tags.append(encoded)
+        # self.data['ner_tags'] = [ner_label_encoder.transform(lbl).tolist() for lbl in self.data['ner_tags_names']]
+        self.data['ner_tags'] = tags
+        self.data['ner_labels']['names'] = list(ner_label_encoder.classes_)
+        self.data['ner_labels']['label_encoding'] = {l: ner_label_encoder.transform([l])[0] for l in ner_label_encoder.classes_}
+
     def generate_labels(self, labels_seq) -> Dataset:
         """
         Create all labels from a list of the form ['B-ORG', 'B-LOC', 'I-LOC']

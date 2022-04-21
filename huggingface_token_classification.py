@@ -1,4 +1,5 @@
 import os
+import time
 
 from datasets import load_dataset, load_metric
 import numpy as np
@@ -54,6 +55,7 @@ def compute_metrics(p):
 
 datasets = ["ATIS", "benchmarking_data", "SNIPS"]
 for dataset_name in datasets:
+    print(f"Training on dataset {dataset_name}")
     dataset_combiner = DatasetCombiner(os.path.join("datasets", dataset_name))
     dataset = dataset_combiner.dataset
     label_list = dataset["train"].features[f"ner_tags"].feature.names
@@ -71,7 +73,7 @@ for dataset_name in datasets:
         learning_rate=2e-5,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
-        num_train_epochs=100,
+        num_train_epochs=5,
         weight_decay=0.01,
     )
 
@@ -85,14 +87,21 @@ for dataset_name in datasets:
         compute_metrics=compute_metrics,
         
     )
+    start = time.time()
     trainer.train()
+    ellapsed = time.time() - start
     test_metrics = trainer.evaluate()
     ev_df = pd.DataFrame({"metric": k, "value": v} for k, v in test_metrics.items())
+    ev_df = pd.concat([ev_df, pd.DataFrame({"metric": ["training_time"], "value": [ellapsed]})])
     ev_df.to_csv(os.path.join("results", "bert", f"{dataset_name}-ner-test.csv"), index=False)
 
     # Save the model
     trainer.save_model(os.path.join('huggingface-models', f'{dataset_name.lower()}-ner.model'))
-    validate_dataset = CoNLLParser(os.path.join("datasets", dataset_name, "valid")).to_bert_ner_data()
+
+    # Process validation dataset to evaluate
+    validate_dataset = CoNLLParser(os.path.join("datasets", dataset_name, "valid"))
+    validate_dataset.reset_labels(dataset_combiner.ner_label_encoder)
+    validate_dataset = validate_dataset.to_bert_ner_data()
 
     # Evaluate on the validaton dataset
     tokenized_validate_dataset = validate_dataset.map(tokenize_and_align_labels, batched=True, fn_kwargs={"tokenizer": tokenizer})
