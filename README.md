@@ -19,6 +19,9 @@ rasa train
 rasa run --enable-api
 ```
 
+## NOTE
+I modified the rasa WhitespaceTokenizer to simply split on whitespace. The original implementation uses a regular expression to handle special characters, but in order to align with the datasets it's necessary to split on whitespace.
+
 ## Interact via rasa API
 ```python
 >>> import requests
