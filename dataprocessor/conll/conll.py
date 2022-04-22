@@ -45,6 +45,20 @@ class DatasetCombiner(BaseParser):
             parser.reset_labels(self.ner_label_encoder)
             self.payload[folder] = getattr(parser, func)()
         self.dataset = DatasetDict(self.payload)
+    
+    def to_rasa_data(self) -> str:
+        grouped_intents = defaultdict(list)
+        for folder in self.FOLDERS:
+            for intent, lines in self.datasets[folder].to_rasa_data().items():
+                grouped_intents[intent].extend(lines)
+        payload = []
+        for intent, lines in grouped_intents.items():
+            if len(lines) < 2:
+                continue
+            examples = '\n    - '.join(lines)
+            block = f'- intent: {intent}\n  examples: |\n    - {examples}\n'
+            payload.append(block)
+        return 'version: "3.1"\n\nnlu:\n' + ''.join(payload)
 
 
 class CoNLLParser(BaseParser):
@@ -130,7 +144,7 @@ class CoNLLParser(BaseParser):
     def bert_intent_data(self):
         return Dataset.from_pandas(pd.DataFrame([{"label": self.intent_label_encoder.transform([label])[0], "text": text} for label, text in zip(self.data['label'], self.data['seq.in'])]))
 
-    def to_rasa_data(self) -> str:
+    def to_rasa_data(self) -> defaultdict:
         grouped_intents = defaultdict(list)
         intents = self.data['label']
         if not 'seq.out' in self.data:
@@ -138,25 +152,12 @@ class CoNLLParser(BaseParser):
             payload = []
             for intent, utterance in zip(intents, utterances):
                 grouped_intents[intent.replace('#', '+')].append(utterance)
-            for intent, lines in grouped_intents.items():
-                if len(lines) < 2:
-                    continue
-                examples = '\n    - '.join(lines)
-                block = f'- intent: {intent}\n  examples: |\n    - {examples}\n'
-                payload.append(block)
-            return 'version: "3.1"\n\nnlu:\n' + ''.join(payload)
+            return grouped_intents
         tokens = self.data['tokens']
         ner_tags = self.data['ner_tags_names']
         for intent, tags, toks in zip(intents, ner_tags, tokens):
             grouped_intents[intent.replace('#', '+')].append(self.conll_to_rasa(toks, tags))
-        payload = []
-        for intent, lines in grouped_intents.items():
-            if len(lines) < 2:
-                continue
-            examples = '\n    - '.join(lines)
-            block = f'- intent: {intent}\n  examples: |\n    - {examples}\n'
-            payload.append(block)
-        return 'version: "3.1"\n\nnlu:\n' + ''.join(payload)
+        return grouped_intents
 
     @staticmethod
     def conll_to_rasa(tokens: List[str], ner_tags: List[str]) -> str:
@@ -220,184 +221,3 @@ class CoNLLParser(BaseParser):
                     label = f'{prefix}-{ent}'
                     labels[ix] = label
         return labels
-
-"""
-fields = [
-    "text",
-    "intent.name",
-    "entities"
-]
-{
- "text": "i would like to find a flight from charlotte to las vegas that makes a stop in st. louis",
- "intent": {
-  "name": "atis_flight",
-  "confidence": 1.0
- },
- "entities": [
-  {
-   "entity": "fromloc.city_name",
-   "start": 35,
-   "end": 44,
-   "confidence_entity": 0.9999704360961914,
-   "value": "charlotte",
-   "extractor": "DIETClassifier"
-  },
-  {
-   "entity": "toloc.city_name",
-   "start": 48,
-   "end": 57,
-   "confidence_entity": 0.999308705329895,
-   "value": "las vegas",
-   "extractor": "DIETClassifier"
-  },
-  {
-   "entity": "stoploc.city_name",
-   "start": 79,
-   "end": 81,
-   "confidence_entity": 0.9966257810592651,
-   "value": "st",
-   "extractor": "DIETClassifier"
-  },
-  {
-   "entity": "stoploc.city_name",
-   "start": 83,
-   "end": 88,
-   "confidence_entity": 0.9859499335289001,
-   "value": "louis",
-   "extractor": "DIETClassifier"
-  }
- ],
- "text_tokens": [
-  [
-   0,
-   1
-  ],
-  [
-   2,
-   7
-  ],
-  [
-   8,
-   12
-  ],
-  [
-   13,
-   15
-  ],
-  [
-   16,
-   20
-  ],
-  [
-   21,
-   22
-  ],
-  [
-   23,
-   29
-  ],
-  [
-   30,
-   34
-  ],
-  [
-   35,
-   44
-  ],
-  [
-   45,
-   47
-  ],
-  [
-   48,
-   51
-  ],
-  [
-   52,
-   57
-  ],
-  [
-   58,
-   62
-  ],
-  [
-   63,
-   68
-  ],
-  [
-   69,
-   70
-  ],
-  [
-   71,
-   75
-  ],
-  [
-   76,
-   78
-  ],
-  [
-   79,
-   81
-  ],
-  [
-   83,
-   88
-  ]
- ],
- "intent_ranking": [
-  {
-   "name": "atis_flight",
-   "confidence": 1.0
-  },
-  {
-   "name": "atis_flight+atis_airfare",
-   "confidence": 1.590412373596495e-22
-  },
-  {
-   "name": "atis_airline",
-   "confidence": 9.077638899810575e-23
-  },
-  {
-   "name": "atis_quantity",
-   "confidence": 6.554135341792252e-23
-  },
-  {
-   "name": "atis_ground_fare",
-   "confidence": 4.008480569555323e-23
-  },
-  {
-   "name": "atis_abbreviation",
-   "confidence": 3.9862173370881756e-23
-  },
-  {
-   "name": "atis_flight_no",
-   "confidence": 3.805358668336137e-23
-  },
-  {
-   "name": "atis_capacity",
-   "confidence": 3.243134030197139e-23
-  },
-  {
-   "name": "atis_airport",
-   "confidence": 3.0513414337543754e-23
-  },
-  {
-   "name": "atis_ground_service",
-   "confidence": 2.9761579407770195e-23
-  }
- ],
- "response_selector": {
-  "all_retrieval_intents": [],
-  "default": {
-   "response": {
-    "responses": null,
-    "confidence": 0.0,
-    "intent_response_key": null,
-    "utter_action": "utter_None"
-   },
-   "ranking": []
-  }
- }
-}
-"""

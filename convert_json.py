@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from dataprocessor import CoNLLParser, JsonParser
+from dataprocessor import DatasetCombiner, JsonParser
 
 dataset_name = "benchmarking_data"
 train_data_folder = os.path.join('datasets', dataset_name, 'train')
@@ -67,8 +67,8 @@ with open(dest_valid_data_folder.joinpath("seq.out"), "w", encoding='utf-8') as 
     file.write('\n'.join(X_valid['seq.out']))
 
 # Now read using CoNLL
-train_parser = CoNLLParser(dest_test_data_folder)
-data = train_parser.to_rasa_data()
+parser = DatasetCombiner(os.path.join("datasets", "benchmarking_data"), mode="ner")
+data = parser.to_rasa_data()
 
 dest_folder = Path(os.path.join('rasa-models', dataset_name.lower()))
 dest_folder.mkdir(parents=True, exist_ok=True)

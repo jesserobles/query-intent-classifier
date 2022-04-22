@@ -11,6 +11,8 @@
 - SNIPS - Personal assistant data with 7 intents. Includes entities. Need to parse similar to the ATIS format, which is in [CONLL](https://nlpforge.com/2021/07/13/data-annotation-for-named-entity-recognition-part-1/) format
 - search_trends - [Google search trends](https://storage.googleapis.com/covid19-open-data/covid19-vaccination-search-insights/top_queries/US_l1_vaccination_trending_searches.csv) for covid vaccines and some intents.
 
+The datasets are available in the datasets.zip file. Once unzipped, all of the folder should contain three folders: `test`, `train`, `valid`. Rename any folders to match that case. Some of the data will be generated and placed in the folders as you run the scripts.
+
 ## Train rasa model
 ```bash
 rasa train
@@ -51,39 +53,24 @@ rasa train --data nlu_data/ -c config.yml -d domain.yml --fixed-model-name foo n
 import os
 from pathlib import Path
 
-from dataprocessor import CoNLLParser
+from dataprocessor import DatasetCombiner
 
 dataset_name = "SNIPS"
-data_folder = os.path.join('datasets', dataset_name, 'train')
+data_folder = os.path.join('datasets', dataset_name)
 dest_folder = Path(os.path.join('rasa-models', dataset_name.lower()))
 dest_folder.mkdir(parents=True, exist_ok=True)
 dest_file = dest_folder.joinpath(f'{dataset_name.lower()}.yml')
 
-parser = CoNLLParser(data_folder)
+parser = DatasetCombiner(data_folder, mode=mode)
 data = parser.to_rasa_data()
 
 with open(dest_file, 'w', encoding='utf-8') as file:
     file.write(data)
 
-import os
-from pathlib import Path
-
-from dataprocessor import CsvParser
-
-dataset_name = "search_trends"
-data_folder = os.path.join('datasets', 'search_trends', 'US_l1_vaccination_trending_searches.csv')
-dest_folder = Path(os.path.join('rasa-models', dataset_name.lower()))
-dest_folder.mkdir(parents=True, exist_ok=True)
-dest_file = dest_folder.joinpath(f'data.yml')
-
-parser = CsvParser(data_folder)
-data = parser.to_rasa_data()
-
-with open(dest_file, 'w', encoding='utf-8') as file:
-    file.write(data)
 ```
 
 ## Generate Rasa Dataset from JSON Format
+Note that you should run this to convert the json data to CoNLL format before converting to rasa.
 ```python
 import os
 from pathlib import Path
