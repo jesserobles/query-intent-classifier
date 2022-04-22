@@ -174,3 +174,10 @@ message = UserMessage(text)
 parsed = agent.processor._parse_message_with_graph(message)
 
 ```
+
+## Rasa model training times
+BANKING77: 5:55
+benchmarking_data: 9:47
+CLINC150: 5:20
+HWU64: 2:42
+SNIPS: 10:05
