@@ -89,7 +89,7 @@ atis_ground_fare
 atis_flight
 atis_flight_time
 atis_flight
-atis_quantity
+atis_capacity
 atis_flight
 atis_flight
 atis_flight_time
@@ -151,7 +151,7 @@ atis_airline
 atis_airfare
 atis_flight
 atis_flight
-atis_flight
+atis_meal
 atis_flight
 atis_flight
 atis_flight
@@ -162,7 +162,7 @@ atis_flight
 atis_airfare
 atis_airline
 atis_quantity
-atis_airfare
+atis_flight
 atis_flight
 atis_flight
 atis_aircraft
@@ -189,7 +189,7 @@ atis_flight
 atis_airline
 atis_airfare
 atis_flight
-atis_flight
+atis_airfare
 atis_flight
 atis_quantity
 atis_flight
@@ -254,7 +254,7 @@ atis_flight
 atis_abbreviation
 atis_aircraft
 atis_flight
-atis_flight
+atis_ground_service
 atis_flight
 atis_flight
 atis_airfare
@@ -383,7 +383,7 @@ atis_ground_service
 atis_flight
 atis_aircraft
 atis_flight
-atis_abbreviation
+atis_airfare
 atis_flight
 atis_flight
 atis_ground_service
@@ -425,7 +425,7 @@ atis_ground_service
 atis_flight
 atis_flight
 atis_flight
-atis_airfare
+atis_flight
 atis_flight
 atis_flight
 atis_abbreviation
@@ -452,7 +452,7 @@ atis_airport
 atis_flight
 atis_flight
 atis_flight
-atis_airline
+atis_airfare
 atis_airline
 atis_flight
 atis_ground_service

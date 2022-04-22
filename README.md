@@ -176,6 +176,7 @@ parsed = agent.processor._parse_message_with_graph(message)
 ```
 
 ## Rasa model training times
+ATIS: 15:00 (estimate with enough GPU memory), 3:41:50 on CPU
 BANKING77: 5:55
 benchmarking_data: 9:47
 CLINC150: 5:20
